@@ -1,0 +1,16 @@
+- QRCode
+  - version
+  - ECl
+  - Data mode
+  - module - to store the final output [bool - true/false - black/white]
+  - vestor<QRSegment> - ???
+  - vector<QRBitBuffer> - ???
+  
+- QRSegment
+- QRBitBuffer
+- QRDataEncode
+  - QRNumericEncode
+  - QRAlphanumericEncode
+  - QRByteEncode
+  - QRKanjiEncode
+  
