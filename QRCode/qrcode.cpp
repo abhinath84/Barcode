@@ -4,8 +4,8 @@ using namespace QR;
 
 QRCode::QRCode()
   :m_datamode(DM_NUL),
-   m_ecl(),
-   m_version(),
+   m_ecl(ECL_L),
+   m_version(1),
    m_width(0),
    p_data(NULL)
 {
@@ -113,6 +113,24 @@ unsigned char* QRCode::getData() const
   return(data);
 }
 
+QRDataEncode* QRCode::getDataEncode()
+{
+  if(m_datamode > DM_NUL)
+  {
+    /// Numeric Data Mode
+    if(m_datamode == DM_NUM)
+      return(new QRNumericEncode());
+    //else if(m_datamode == DM_AN)
+    //  return(new QRAlphanumericEncode());
+    //else if(m_datamode == DM_8)
+    //  return(new QRByteEncode());
+    //else if(m_datamode == DM_KANJI)
+    //  return(new QRKanjiEncode());
+  }
+  else
+    return(NULL);
+}
+
 void QRCode::identifyDataMode(const string &input, const DATA_MODE &hint)
 {
   if(input.empty())
@@ -132,22 +150,64 @@ void QRCode::identifyDataMode(const string &input, const DATA_MODE &hint)
     m_datamode = DM_8;
 }
 
+bool QRCode::encodeData(const string &input)
+{
+  bool status = false;
+
+  if(m_datamode > DM_NUL)
+  {
+    QRDataEncode *pDataEncode = NULL;
+
+    pDataEncode = getDataEncode();
+    if(pDataEncode != NULL)
+    {
+      pDataEncode->setInput(input);
+
+      /// 2.1 Choose the Error Correction Level (Pass as input)
+      pDataEncode->setErrorCorrectionLevel(m_ecl);
+
+      /// 2.2 Smallest version of the data
+      pDataEncode->calculateVersion();
+      pDataEncode->calculateErrorCorrectionLevel();
+
+      /// 2.3 Add the Mode Indicator
+      pDataEncode->addModeIndicator();
+
+      /// 2.4 Add the Character Count Indecator
+      pDataEncode->addCharCountIndicator();
+
+      /// 2.5 Edcode input data using selected data mode
+      /// 2.6 Break up into 8-bit codewords and add padded bytes if needed
+      pDataEncode->encode();
+
+      status = true;
+    }
+  }
+
+  return(status);
+}
+
 void QRCode::encode(const string &input, const DATA_MODE &hint)
 {
   if( !input.empty() )
   {
     if((hint == DM_8) || (hint == DM_KANJI))
     {
+      bool status = false;
       /// 1. Data Analysis
       ///   - get data mode according to the input string.
       identifyDataMode(input, hint);
 
       /// 2. Data Encoding
-      /// 3. Error Correction Coding
-      /// 4. Structure Final Message
-      /// 5. Module Placement in Matrix
-      /// 6. Data Masking
-      /// 7. Format and Version Information
+      status = encodeData(input);
+      if(status)
+      {
+        /// 3. Error Correction Coding
+        /// 4. Structure Final Message
+        /// 5. Module Placement in Matrix
+        /// 6. Data Masking
+        /// 7. Format and Version Information
+      }
     }
   }
 }

@@ -16,8 +16,10 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 
 #include "qrutility.h"
+#include "qrdataencode.h"
 
 using namespace std;
 
@@ -54,14 +56,17 @@ namespace QR
       void writeToJPEG(const string &filename);
 
     private:
+      QRDataEncode* getDataEncode();
       void identifyDataMode(const string &input, const DATA_MODE &hint);
+      bool encodeData(const string &input);
 
     private:
-      DATA_MODE     m_datamode;
-      ECL           m_ecl;
-      int           m_version;
-      int           m_width;
-      unsigned char *p_data;
+      DATA_MODE             m_datamode;
+      ECL                   m_ecl;
+      int                   m_version;
+      int                   m_width;
+      unsigned char         *p_data;
+      vector<vector<bool> > m_data;
   };
 
 }

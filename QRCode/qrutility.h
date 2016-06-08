@@ -18,13 +18,20 @@ using namespace std;
 
 namespace QR
 {
+  /// define system datatype
+  typedef unsigned char      uint8_t;
+  typedef unsigned short     uint16_t;
+  typedef unsigned int       uint32_t;
+  typedef unsigned long long uint64_t;
+
   //!  @enum  DATA_MODE
   /*!
     Data modes for encoding text.Each mode encodes the text as a string of bits (1s and 0s),
     but each mode uses a different method for converting the text into bits.
     Each method is optimized to generate the shortest possible string of bits for that data type.
   */
-  typedef enum DATA_MODE{
+  typedef enum DATA_MODE
+  {
     DM_NUL = -1,  ///< Terminator (NUL character). Internal use only
     DM_NUM = 0,   ///< Numeric mode
     DM_AN,        ///< Alphabet-numeric mode
@@ -41,7 +48,8 @@ namespace QR
   /*!
     Error Connection Level.
   */
-  typedef enum ERROR_CORRECTION_LEVEL{
+  typedef enum ERROR_CORRECTION_LEVEL
+  {
     ECL_L = 0, ///< lowest
     ECL_M,
     ECL_Q,
