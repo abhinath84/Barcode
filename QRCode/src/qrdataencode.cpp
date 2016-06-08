@@ -9,7 +9,8 @@ QRDataEncode::QRDataEncode()
   m_ecl(ECL_L),
   m_version(0),
   m_width(),
-  m_bits()
+  m_bits(),
+  m_encodedData()
 {
 }
 
@@ -18,7 +19,8 @@ QRDataEncode::QRDataEncode(const string &input, const ECL &ecl)
   m_ecl(ecl),
   m_version(0),
   m_width(input.size()),
-  m_bits()
+  m_bits(),
+  m_encodedData()
 {
 }
 
@@ -27,7 +29,8 @@ QRDataEncode::QRDataEncode(const QRDataEncode &other)
   m_ecl(other.m_ecl),
   m_version(other.m_version),
   m_width(other.m_width),
-  m_bits(other.m_bits)
+  m_bits(other.m_bits),
+  m_encodedData(other.m_encodedData)
 {
 }
 
@@ -39,6 +42,7 @@ QRDataEncode& QRDataEncode::operator=(const QRDataEncode &other)
     setErrorCorrectionLevel(other.m_ecl);
     setVersion(other.m_version);
     setBits(other.m_bits);
+    setEncodedData(other.m_encodedData);
   }
 
   return(*this);
@@ -115,6 +119,18 @@ void QRDataEncode::appendBit(uint32_t val, int len)
   //m_bits.append(val, len);
 }
 
+vector<uint8_t> QRDataEncode::getEncodedData() const
+{
+  return(m_encodedData);
+}
+
+void QRDataEncode::setEncodedData(const vector<uint8_t> &data)
+{
+  m_encodedData.clear();
+  copy(data.begin(), data.end(),
+        std::back_inserter(m_encodedData));
+}
+
 bool QRDataEncode::calculateVersion()
 {
   return false;
@@ -180,6 +196,27 @@ bool QRDataEncode::addCharCountIndicator()
   return false;
 }
 
+int QRDataEncode::getCCILength(int datamode)
+{
+  int len = 0;
+  const int QRDataEncode_CCLT[][4] = {
+                                        /// Numeric, Alphanumeric, Byte, Kanji
+                                        {10, 9, 8, 8},      /// 1 - 9
+                                        {12, 11, 16, 10},   /// 10 - 26
+                                        {14, 13, 16, 12}    /// 27 - 40
+                                      };
+
+  /// get length
+  if(m_version < 10)
+    len = QRDataEncode_CCLT[0][datamode];
+  else if(m_version < 27)
+    len = QRDataEncode_CCLT[1][datamode];
+  else if(m_version <= 40)
+    len = QRDataEncode_CCLT[2][datamode];
+
+  return(len);
+}
+
 bool QRDataEncode::encode()
 {
   return false;
@@ -231,10 +268,10 @@ bool QRNumericEncode::calculateErrorCorrectionLevel()
 
 bool QRNumericEncode::addModeIndicator()
 {
-  uint8_t *modeIndicator = NULL;
-
-  modeIndicator = (uint8_t*)malloc(4 * sizeof(uint8_t));
-  memcpy(modeIndicator, "0001", 4 * sizeof(uint8_t));
+  m_encodedData.push_back('0');
+  m_encodedData.push_back('0');
+  m_encodedData.push_back('0');
+  m_encodedData.push_back('1');
 
   return(true);
 }
@@ -242,26 +279,33 @@ bool QRNumericEncode::addModeIndicator()
 bool QRNumericEncode::addCharCountIndicator()
 {
   bool status = false;
-  int len = 0;
-  uint8_t *charCountIndicator = NULL;
 
   /// get length
-  if(m_version < 10)
-    len = QRDataEncode_CCLT[0][0];
-  else if(m_version < 27)
-    len = QRDataEncode_CCLT[1][0];
-  else if(m_version <= 40)
-    len = QRDataEncode_CCLT[2][0];
+  int len = getCCILength(0);
 
   if(len > 0)
   {
-    charCountIndicator = (uint8_t*)malloc(4 * sizeof(uint8_t));
-
     /// convert input length into bit and pad extra bit by '0'
-    /// uint8_t *cci;
-    /// cci = convertToByte(m_input.lenght());
-    /// 
-    status = true;
+    uint8_t *cci = NULL;
+    int cci_len = 0;
+    cci_len = convertToByte(m_input.length(), cci);
+
+    if(cci_len > 0)
+    {
+      int diff = len - cci_len;
+      for(int i = 0; i < len; ++i)
+      {
+        if(i < diff)
+          m_encodedData.push_back('0');
+        else
+        {
+          m_encodedData.push_back(*cci);
+          cci++;
+        }
+      }
+
+      status = true;
+    }
   }
 
   return(status);

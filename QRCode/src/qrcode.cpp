@@ -115,8 +115,6 @@ unsigned char* QRCode::getData() const
 
 QRDataEncode* QRCode::getDataEncode()
 {
-  if(m_datamode > DM_NUL)
-  {
     /// Numeric Data Mode
     if(m_datamode == DM_NUM)
       return(new QRNumericEncode());
@@ -126,9 +124,8 @@ QRDataEncode* QRCode::getDataEncode()
     //  return(new QRByteEncode());
     //else if(m_datamode == DM_KANJI)
     //  return(new QRKanjiEncode());
-  }
-  else
-    return(NULL);
+    else
+      return(NULL);
 }
 
 void QRCode::identifyDataMode(const string &input, const DATA_MODE &hint)

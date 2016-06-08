@@ -94,4 +94,27 @@ namespace QR
 
     return(status);
   }
+
+  int convertToByte(int val, uint8_t *bits)
+  {
+    int count = 0;
+
+    count = ((val < 16) ? sizeof(int) : floor(val/16)) * sizeof(int);
+    if(bits != NULL)
+    {
+      free(bits);
+      bits = NULL;
+    }
+    bits = (uint8_t*)malloc(count);
+
+    for(int i=0; i < count; ++i)
+    {
+        const unsigned shift_amount = count-i-1;
+        const unsigned this_bit = (val>>shift_amount)&1;
+        *bits = this_bit;
+        ++bits;
+    }
+
+    return(count);
+  }
 }
