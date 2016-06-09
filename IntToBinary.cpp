@@ -1,8 +1,10 @@
-#include <cstdio>
-#include <iterator>
-#include <climits>
 #include <iostream>
-#include <math.h>
+#include <iterator>
+#include <string>
+#include <vector>
+#include <cstdio>
+#include <climits>
+#include <cmath>
 
 using namespace std;
 
@@ -37,6 +39,37 @@ void convert_number_to_array_of_digits(const unsigned number, int count,
         *first = 0;
         ++first;
     }
+}
+
+string convertToByte(int val)
+{
+  /// base cases
+  if(val == 0)
+    return("0");
+  else if(val == 1)
+    return("1");
+  else
+    return(convertToByte(val / 2) + convertToByte(val % 2));
+}
+
+void convertToByte(int val, vector<unsigned char> &bits)
+{
+  /// base cases
+  if(val == 0)
+  {
+    bits.push_back('0');
+    return;
+  }
+  else if(val == 1)
+  {
+    bits.push_back('1');
+    return;
+  }
+  else
+  {
+    convertToByte((val / 2), bits);
+    convertToByte((val % 2), bits);
+  }
 }
 
 int main()
