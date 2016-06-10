@@ -72,6 +72,30 @@ void convertToByte(int val, vector<unsigned char> &bits)
   }
 }
 
+vector<unsigned char> convertToByte(int val)
+{
+    static vector<unsigned char> bits;
+
+    /// base cases
+    if(val == 0)
+    {
+        bits.push_back('0');
+        return bits;
+    }
+    else if(val == 1)
+    {
+        bits.push_back('1');
+        return bits;
+    }
+    else
+    {
+        bits = convertToByte((val / 2));
+        bits = convertToByte((val % 2));
+        return(bits);
+    }
+}
+
+
 int main()
 {
     int number = 16;
@@ -81,4 +105,11 @@ int main()
     convert_number_to_array_of_digits(number, count, std::begin(array), std::end(array));
     for(int i=0; i < count; ++i)
         std::cout << array[i] << ' ';
+        
+    vector<unsigned char> rbits;
+    rbits = convertToByte(11);
+    cout << " convertToByte(11) : ";
+    for(int i = 0; i < (int)rbits.size(); ++i)
+        cout << bits[i];
+    cout << endl;
 }
