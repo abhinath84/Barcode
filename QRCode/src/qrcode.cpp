@@ -7,7 +7,7 @@ QRCode::QRCode()
    m_ecl(ECL_L),
    m_version(1),
    m_width(0),
-   p_data(NULL)
+   m_encoded()
 {
 }
 
@@ -16,7 +16,7 @@ QRCode::QRCode(int version, const ECL &ecl)
    m_ecl(ecl),
    m_version(version),
    m_width(0),
-   p_data(NULL)
+   m_encoded()
 {
 }
 
@@ -25,14 +25,8 @@ QRCode::QRCode(const QRCode &other)
  m_ecl(other.m_ecl),
  m_version(other.m_version),
  m_width(other.m_width),
- p_data(NULL)
+ m_encoded(other.m_encoded)
 {
-  if((other.p_data != NULL) && (other.m_width > 0))
-  {
-    p_data = (unsigned char*)malloc(other.m_width);
-
-    memcpy(p_data, other.p_data, other.m_width);
-  }
 }
 
 QRCode& QRCode::operator=(const QRCode &other)
@@ -44,13 +38,7 @@ QRCode& QRCode::operator=(const QRCode &other)
     m_version = other.m_version;
     m_width = other.m_width;
 
-    if((other.p_data != NULL) && (other.m_width > 0))
-    {
-      if(p_data == NULL)
-        p_data = (unsigned char*)malloc(other.m_width);
-
-      memcpy(p_data, other.p_data, other.m_width);
-    }
+    setEncodedData(other.m_encoded);
   }
 
   return(*this);
@@ -58,8 +46,14 @@ QRCode& QRCode::operator=(const QRCode &other)
 
 QRCode::~QRCode()
 {
-  if(p_data != NULL)
-    free(p_data);
+}
+
+void QRCode::setEncodedData(const QRBitBuffer &encoded)
+{
+  if(encoded.size() > 0)
+  {
+    m_encoded = encoded;
+  }
 }
 
 void QRCode::setDataMode(const DATA_MODE &dm)
@@ -100,17 +94,9 @@ int QRCode::getWidth()const
   return(m_width);
 }
 
-unsigned char* QRCode::getData() const
+vector<unsigned char> QRCode::getData() const
 {
-  unsigned char *data = NULL;
-
-  if(m_width > 0)
-  {
-    data = (unsigned char *)malloc(m_width);
-    memcpy(data, p_data, m_width);
-  }
-
-  return(data);
+  return(m_encoded.bytes());
 }
 
 QRDataEncode* QRCode::getDataEncode()
@@ -118,8 +104,8 @@ QRDataEncode* QRCode::getDataEncode()
     /// Numeric Data Mode
     if(m_datamode == DM_NUM)
       return(new QRNumericEncode());
-    //else if(m_datamode == DM_AN)
-    //  return(new QRAlphanumericEncode());
+    else if(m_datamode == DM_AN)
+      return(new QRAlphanumericEncode());
     //else if(m_datamode == DM_8)
     //  return(new QRByteEncode());
     //else if(m_datamode == DM_KANJI)
@@ -176,6 +162,11 @@ bool QRCode::encodeData(const string &input)
       /// 2.5 Edcode input data using selected data mode
       /// 2.6 Break up into 8-bit codewords and add padded bytes if needed
       pDataEncode->encode();
+
+      /// set version, ECL, encoded data.
+      setEncodedData(pDataEncode->getEncodedData());
+      m_version = pDataEncode->getVersion();
+      m_ecl = pDataEncode->getErrorCorrectionLevel();
 
       status = true;
     }

@@ -99,7 +99,7 @@ namespace QR
   {
     int count = 0;
 
-    count = ((val < 16) ? sizeof(int) : floor(val/16)) * sizeof(int);
+    count = (int)((val < 16) ? sizeof(int) : floor(val/16) * sizeof(int));
     if(bits != NULL)
     {
       free(bits);
@@ -116,5 +116,25 @@ namespace QR
     }
 
     return(count);
+  }
+
+  void convertToByte(int val, vector<unsigned char> &bits)
+  {
+    /// base cases
+    if(val == 0)
+    {
+      bits.push_back('0');
+      return;
+    }
+    else if(val == 1)
+    {
+      bits.push_back('1');
+      return;
+    }
+    else
+    {
+      convertToByte((val / 2), bits);
+      convertToByte((val % 2), bits);
+    }
   }
 }

@@ -13,8 +13,10 @@
 #define QRUTILITY_H
 
 #include <iostream>
+#include <vector>
 #include <cstdlib>
-#include <math.h>
+#include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -26,6 +28,7 @@ namespace QR
   typedef unsigned int      uint32_t;
   typedef unsigned long int uint64_t;
   typedef signed char       int8_t;
+  typedef short             int16_t;
 
   //!  @enum  DATA_MODE
   /*!
@@ -69,7 +72,7 @@ namespace QR
   bool isAlphaNumeric(unsigned char c);
   bool isAlphaNumeric(const string &input);
   bool isKanji(const string &input);
-  int convertToByte(int val, uint8_t *bits);
+  void convertToByte(int val, vector<uint8_t> &bits);
 }
 
 #endif    // QRUTILITY_H

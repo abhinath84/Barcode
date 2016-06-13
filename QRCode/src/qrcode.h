@@ -17,9 +17,11 @@
 #include <cstdlib>
 #include <cstring>
 #include <vector>
+#include <algorithm>
 
 #include "qrutility.h"
 #include "qrdataencode.h"
+#include "qrbitbuffer.h"
 
 using namespace std;
 
@@ -45,7 +47,7 @@ namespace QR
       ECL getErrorCorrectionLevel() const;
       int getVersion()const;
       int getWidth()const;
-      unsigned char* getData() const;
+      vector<unsigned char> getData() const;
 
 
       void encode(const string &input, const DATA_MODE &hint = DM_8);
@@ -59,13 +61,14 @@ namespace QR
       QRDataEncode* getDataEncode();
       void identifyDataMode(const string &input, const DATA_MODE &hint);
       bool encodeData(const string &input);
+      void setEncodedData(const QRBitBuffer &encoded);
 
     private:
       DATA_MODE             m_datamode;
       ECL                   m_ecl;
       int                   m_version;
       int                   m_width;
-      unsigned char         *p_data;
+      QRBitBuffer           m_encoded;
       vector<vector<bool> > m_data;
   };
 

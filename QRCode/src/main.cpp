@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
   QRCode qrc;
 
-  qrc.encode("Creo3.0 - Mfg Model");
+  qrc.encode("12345698");
   qrc.writeToBMP("test.bmp");
 
   return(0);
