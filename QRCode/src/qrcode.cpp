@@ -99,7 +99,7 @@ vector<unsigned char> QRCode::getData() const
   return(m_encoded.bytes());
 }
 
-QRDataEncode* QRCode::getDataEncode()
+/*QRDataEncode* QRCode::getDataEncode()
 {
     /// Numeric Data Mode
     if(m_datamode == DM_NUM)
@@ -112,7 +112,7 @@ QRDataEncode* QRCode::getDataEncode()
     //  return(new QRKanjiEncode());
     else
       return(NULL);
-}
+}*/
 
 void QRCode::identifyDataMode(const string &input, const DATA_MODE &hint)
 {
@@ -139,7 +139,7 @@ bool QRCode::encodeData(const string &input)
 
   if(m_datamode > DM_NUL)
   {
-    QRDataEncode *pDataEncode = NULL;
+    /*QRDataEncode *pDataEncode = NULL;
 
     pDataEncode = getDataEncode();
     if(pDataEncode != NULL)
@@ -156,10 +156,10 @@ bool QRCode::encodeData(const string &input)
       /// 2.3 Add the Mode Indicator
       pDataEncode->addModeIndicator();
 
-      /// 2.4 Add the Character Count Indecator
+      /// 2.4 Add the Character Count Indicator
       pDataEncode->addCharCountIndicator();
 
-      /// 2.5 Edcode input data using selected data mode
+      /// 2.5 Encode input data using selected data mode
       /// 2.6 Break up into 8-bit codewords and add padded bytes if needed
       pDataEncode->encode();
 
@@ -169,6 +169,23 @@ bool QRCode::encodeData(const string &input)
       m_ecl = pDataEncode->getErrorCorrectionLevel();
 
       status = true;
+    }*/
+
+    QRDataEncode qrDataEncode;
+
+    /// necessary data
+    qrDataEncode.setInput(input);
+    qrDataEncode.setMode(m_datamode + 1);
+    qrDataEncode.setErrorCorrectionLevel(m_ecl);
+
+    /// encode data
+    status = qrDataEncode.encode();
+    if(status)
+    {
+      /// set version, ECL, encoded data.
+      setEncodedData(qrDataEncode.getEncodedData());
+      m_version = qrDataEncode.getVersion();
+      m_ecl = qrDataEncode.getErrorCorrectionLevel();
     }
   }
 

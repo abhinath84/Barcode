@@ -28,7 +28,8 @@ const int QRDataEncode::CAPACITY_TABLE[][4] = {
 };
 
 QRDataEncode::QRDataEncode()
-  : m_input(),
+  : m_mode(0),
+  m_input(),
   m_ecl(ECL_L),
   m_version(0),
   m_width(),
@@ -37,7 +38,8 @@ QRDataEncode::QRDataEncode()
 }
 
 QRDataEncode::QRDataEncode(const string &input, const ECL &ecl)
-  : m_input(input),
+  : m_mode(0),
+  m_input(input),
   m_ecl(ecl),
   m_version(0),
   m_width(input.size()),
@@ -46,7 +48,8 @@ QRDataEncode::QRDataEncode(const string &input, const ECL &ecl)
 }
 
 QRDataEncode::QRDataEncode(const QRDataEncode &other)
-  : m_input(other.m_input),
+  : m_mode(other.m_mode),
+  m_input(other.m_input),
   m_ecl(other.m_ecl),
   m_version(other.m_version),
   m_width(other.m_width),
@@ -58,6 +61,7 @@ QRDataEncode& QRDataEncode::operator=(const QRDataEncode &other)
 {
   if(this != &other)
   {
+    setMode(other.m_mode);
     setInput(other.m_input);
     setErrorCorrectionLevel(other.m_ecl);
     setVersion(other.m_version);
@@ -69,6 +73,17 @@ QRDataEncode& QRDataEncode::operator=(const QRDataEncode &other)
 
 QRDataEncode::~QRDataEncode()
 {
+}
+
+int QRDataEncode::getMode() const
+{
+  return(m_mode);
+}
+
+void QRDataEncode::setMode(int mode)
+{
+  if((mode > 0) && (mode < 4))
+    m_mode = mode;
 }
 
 string QRDataEncode::getInput() const
@@ -205,37 +220,6 @@ void QRDataEncode::setEncodedData(const QRBitBuffer &data)
   m_encodedData = data;
 }
 
-bool QRDataEncode::calculateVersion()
-{
-  return false;
-}
-
-//bool QRDataEncode::calculateVersion(const int CCT[][4])
-//{
-//  bool status = false;
-//
-//  for(int i = m_ecl; i <= ECL_H; ++i)
-//  {
-//    for(int j = 0; j < 40; ++j)
-//    {
-//      if(m_width <= CCT[j][i])
-//      {
-//        m_version = j + 1;
-//        if(m_ecl != i)
-//          m_ecl = (ECL)i;
-//
-//        status = true;
-//        break;
-//      }
-//    }
-//
-//    if(status)
-//      break;
-//  }
-//  
-//  return(status);
-//}
-
 int QRDataEncode::calculateCharacterCapacity(int mode, int version, const ECL &ecl)
 {
   int   bits, digits, modebits, capacity = 0;
@@ -265,19 +249,19 @@ int QRDataEncode::calculateCharacterCapacity(int mode, int version, const ECL &e
   return(capacity);
 }
 
-bool QRDataEncode::calculateVersion(int mode)
+bool QRDataEncode::calculateVersion()
 {
   bool  status = false;
   int   capacity;
 
-  if((mode > 0) && (mode <= 4))
+  if((m_mode > 0) && (m_mode <= 4))
   {
     for(int i = m_ecl; i <= ECL_H; ++i)   // ECL
     {
       for(int j = 0; j < 40; ++j)         // version
       {
         /// i = ECL, j = version
-        capacity = calculateCharacterCapacity(mode, (j + 1), (ECL)i);
+        capacity = calculateCharacterCapacity(m_mode, (j + 1), (ECL)i);
         if (capacity >= m_width)
         {
           m_version = j + 1;
@@ -299,11 +283,6 @@ bool QRDataEncode::calculateVersion(int mode)
 
 bool QRDataEncode::calculateErrorCorrectionLevel()
 {
-  return false;
-}
-
-bool QRDataEncode::calculateErrorCorrectionLevel(int mode)
-{
   bool status = false;
   int  capacity = 0;
 
@@ -311,7 +290,7 @@ bool QRDataEncode::calculateErrorCorrectionLevel(int mode)
   {
     for(int i = (m_ecl + 1); i <= ECL_H; ++i)
     {
-      capacity = calculateCharacterCapacity(mode, m_version, (ECL)i);
+      capacity = calculateCharacterCapacity(m_mode, m_version, (ECL)i);
       if((int)m_input.length() > capacity)
       {
         m_ecl = (ECL)(i - 1);
@@ -319,6 +298,8 @@ bool QRDataEncode::calculateErrorCorrectionLevel(int mode)
         break;
       }
     }
+
+    status = true;
   }
 
   return(status);
@@ -326,12 +307,44 @@ bool QRDataEncode::calculateErrorCorrectionLevel(int mode)
 
 bool QRDataEncode::addModeIndicator()
 {
-  return false;
+  if(m_mode == 1)
+  {
+    m_encodedData.push_back('0');
+    m_encodedData.push_back('0');
+    m_encodedData.push_back('0');
+    m_encodedData.push_back('1');
+  }
+  else if(m_mode == 2)
+  {
+    m_encodedData.push_back('0');
+    m_encodedData.push_back('0');
+    m_encodedData.push_back('1');
+    m_encodedData.push_back('0');
+  }
+
+  return(true);
 }
 
 bool QRDataEncode::addCharCountIndicator()
 {
-  return false;
+  bool status = false;
+
+  /// get length
+  int len = getCCILength(m_version, (m_mode - 1));
+
+  if(len > 0)
+  {
+    /// convert input length into bit and pad extra bit by '0'
+    vector<uint8_t> cci;
+
+    convertToByte(m_input.length(), cci);
+    if(cci.size() > 0)
+      m_encodedData.push_back(cci, len);
+
+    status = true;
+  }
+
+  return(status);
 }
 
 int QRDataEncode::getCCILength(int version, int datamode)
@@ -359,258 +372,75 @@ int QRDataEncode::getCCILength(int version, int datamode)
   return(len);
 }
 
+bool QRDataEncode::encodeData()
+{
+  bool status = false;
+  int split = 0, c_split = 0;
+  int len = m_input.length();
+
+  if(len > 0)
+  {
+    status = true;
+
+    for(int i = 0; i < len; ++i)
+    {
+      if(status)
+      {
+        /// split number into group of 3-digits
+        split = split * 10 + (m_input[i] - '0');
+        c_split++;
+
+        if(c_split == 3)
+        {
+          /// convert split digit and pad extra bit by '0'
+          status = convertAndAppend(split, 10);
+
+          /// merge into m_encodedData
+          split = c_split = 0;
+        }
+      }
+    }
+
+    if((status) && (c_split > 0))
+    {
+      if(c_split == 1)
+        status = convertAndAppend(split, 4);
+      else
+        status = convertAndAppend(split, 7);
+    }
+
+    /// Break up into 8-bit codewords and add padded bytes if needed
+    if(status)
+      status = appendPadBits();
+  }
+
+  return(status);
+}
+
 bool QRDataEncode::encode()
 {
-  return false;
-}
-
-
-//!< QRNumericEncode
-
-/// QRNumeric_CCT[version][ECL].
-//const int QRNumericEncode::QRNumeric_CCT[40][4] ={
-//      {41, 34, 27, 17}, {77, 63, 48, 34}, {127, 101, 77, 58}, {187, 149, 111, 82}, {255, 202, 144, 106}, {322, 255, 178, 139}, {370, 293, 207, 154}, {461, 365, 259, 202}, {552, 432, 312, 235}, {652, 513, 364, 288},
-//      {772, 604, 427, 331}, {883, 691, 489, 374}, {1022, 796, 580, 427}, {1101, 871, 621, 468}, {1250, 991, 703, 530}, {1408, 1082, 775, 602}, {1548, 1212, 876, 674}, {1725, 1346, 948, 746}, {1903, 1500, 1063, 813}, {2061, 1600, 1159, 919},
-//      {2232, 1708, 1224, 969}, {2409, 1872, 1358, 1056}, {2620, 2059, 1468, 1108}, {2812, 2188, 1588, 1228}, {3057, 2395, 1718, 1286}, {3283, 2544, 1804, 1425}, {3517, 2701, 1933, 1501}, {3669, 2857, 2085, 1581}, {3909, 3035, 2181, 1677}, {4158, 3289, 2358, 1782},
-//      {4417, 3486, 2473, 1897}, {4686, 3693, 2670, 2022}, {4965, 3909, 2805, 2157}, {5253, 4134, 2949, 2301}, {5529, 4343, 3081, 2361}, {5836, 4588, 3244, 2524}, {6153, 4775, 3417, 2625}, {6479, 5039, 3599, 2735}, {6743, 5313, 3791, 2937}, {7089, 5596, 3993, 3057}
-//    };
-
-QRNumericEncode::QRNumericEncode()
-  :QRDataEncode()
-{
-}
-
-QRNumericEncode::QRNumericEncode(const string &input, const ECL &ecl)
-  :QRDataEncode(input, ecl)
-{
-}
-
-QRNumericEncode::QRNumericEncode(const QRNumericEncode &other)
-  :QRDataEncode(other)
-{
-}
-
-QRNumericEncode::~QRNumericEncode()
-{
-}
-
-QRNumericEncode& QRNumericEncode::operator=(const QRNumericEncode &other)
-{
-  if(this != &other)
-  {
-    setInput(other.getInput());
-    setErrorCorrectionLevel(other.getErrorCorrectionLevel());
-    setVersion(other.getVersion());
-    setEncodedData(other.getEncodedData());
-  }
-
-  return(*this);
-}
-
-bool QRNumericEncode::calculateVersion()
-{
-  return(QRDataEncode::calculateVersion(1));
-}
-
-bool QRNumericEncode::calculateErrorCorrectionLevel()
-{
-  return(QRDataEncode::calculateErrorCorrectionLevel(1));
-}
-
-bool QRNumericEncode::addModeIndicator()
-{
-  m_encodedData.push_back('0');
-  m_encodedData.push_back('0');
-  m_encodedData.push_back('0');
-  m_encodedData.push_back('1');
-
-  return(true);
-}
-
-bool QRNumericEncode::addCharCountIndicator()
-{
   bool status = false;
 
-  /// get length
-  int len = getCCILength(m_version, 0);
-
-  if(len > 0)
+  /// 2.1 Choose the Error Correction Level (Pass as input)
+  ///     and check data mode also.
+  if(
+      (m_ecl >= ECL_L) && (m_ecl <= ECL_H) &&
+      ((m_mode > 0) && (m_mode <= 4))
+    )
   {
-    /// convert input length into bit and pad extra bit by '0'
-    vector<uint8_t> cci;
-    
-    convertToByte(m_input.length(), cci);
-    if(cci.size() > 0)
-      m_encodedData.push_back(cci, len);
-  }
+    /// 2.2 Smallest version of the data
+    status = calculateVersion();
+    if(status) status = calculateErrorCorrectionLevel();
 
-  return(status);
-}
+    /// 2.3 Add the Mode Indicator
+    if(status) status = addModeIndicator();
 
-bool QRNumericEncode::encode()
-{
-  bool status = false;
-  int split = 0, c_split = 0;
-  int len = m_input.length();
+    /// 2.4 Add the Character Count Indicator
+    if(status) status = addCharCountIndicator();
 
-  if(len > 0)
-  {
-    status = true;
-
-    for(int i = 0; i < len; ++i)
-    {
-      if(status)
-      {
-        /// split number into group of 3-digits
-        split = split * 10 + (m_input[i] - '0');
-        c_split++;
-
-        if(c_split == 3)
-        {
-          /// convert splitted digit and pad extra bit by '0'
-          status = convertAndAppend(split, 10);
-
-          /// marge into m_encodedData
-          split = c_split = 0;
-        }
-      }
-    }
-
-    if((status) && (c_split > 0))
-    {
-      if(c_split == 1)
-        status = convertAndAppend(split, 4);
-      else
-        status = convertAndAppend(split, 7);
-    }
-
-    /// Break up into 8-bit codewords and add padded bytes if needed
-    if(status)
-      status = appendPadBits();
-  }
-
-  return(status);
-}
-
-//!< QRAlphanumericEncode
-
-/// QRNumeric_CCT[version][ECL].
-//const int QRAlphanumericEncode::QRAlphanumeric_CCT[40][4] ={
-//      {41, 34, 27, 17}, 
-//    };
-
-QRAlphanumericEncode::QRAlphanumericEncode()
-  :QRDataEncode()
-{
-}
-
-QRAlphanumericEncode::QRAlphanumericEncode(const string &input, const ECL &ecl)
-  :QRDataEncode(input, ecl)
-{
-}
-
-QRAlphanumericEncode::QRAlphanumericEncode(const QRAlphanumericEncode &other)
-  :QRDataEncode(other)
-{
-}
-
-QRAlphanumericEncode::~QRAlphanumericEncode()
-{
-}
-
-QRAlphanumericEncode& QRAlphanumericEncode::operator=(const QRAlphanumericEncode &other)
-{
-  if(this != &other)
-  {
-    setInput(other.getInput());
-    setErrorCorrectionLevel(other.getErrorCorrectionLevel());
-    setVersion(other.getVersion());
-    setEncodedData(other.getEncodedData());
-  }
-
-  return(*this);
-}
-
-bool QRAlphanumericEncode::calculateVersion()
-{
-  return(QRDataEncode::calculateVersion(2));
-}
-
-bool QRAlphanumericEncode::calculateErrorCorrectionLevel()
-{
-  return(QRDataEncode::calculateErrorCorrectionLevel(2));
-}
-
-bool QRAlphanumericEncode::addModeIndicator()
-{
-  m_encodedData.push_back('0');
-  m_encodedData.push_back('0');
-  m_encodedData.push_back('1');
-  m_encodedData.push_back('0');
-
-  return(true);
-}
-
-bool QRAlphanumericEncode::addCharCountIndicator()
-{
-  bool status = false;
-
-  /// get length
-  int len = getCCILength(m_version, 0);
-
-  if(len > 0)
-  {
-    /// convert input length into bit and pad extra bit by '0'
-    vector<uint8_t> cci;
-    
-    convertToByte(m_input.length(), cci);
-    if(cci.size() > 0)
-      m_encodedData.push_back(cci, len);
-  }
-
-  return(status);
-}
-
-bool QRAlphanumericEncode::encode()
-{
-  bool status = false;
-  int split = 0, c_split = 0;
-  int len = m_input.length();
-
-  if(len > 0)
-  {
-    status = true;
-
-    for(int i = 0; i < len; ++i)
-    {
-      if(status)
-      {
-        /// split number into group of 3-digits
-        split = split * 10 + (m_input[i] - '0');
-        c_split++;
-
-        if(c_split == 3)
-        {
-          /// convert splitted digit and pad extra bit by '0'
-          status = convertAndAppend(split, 10);
-
-          /// marge into m_encodedData
-          split = c_split = 0;
-        }
-      }
-    }
-
-    if((status) && (c_split > 0))
-    {
-      if(c_split == 1)
-        status = convertAndAppend(split, 4);
-      else
-        status = convertAndAppend(split, 7);
-    }
-
-    /// Break up into 8-bit codewords and add padded bytes if needed
-    if(status)
-      status = appendPadBits();
+    /// 2.5 Encode input data using selected data mode
+    /// 2.6 Break up into 8-bit codewords and add padded bytes if needed
+    if(status) status = encodeData();
   }
 
   return(status);

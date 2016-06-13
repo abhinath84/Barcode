@@ -58,7 +58,7 @@ namespace QR
       void writeToJPEG(const string &filename);
 
     private:
-      QRDataEncode* getDataEncode();
+      //QRDataEncode* getDataEncode();
       void identifyDataMode(const string &input, const DATA_MODE &hint);
       bool encodeData(const string &input);
       void setEncodedData(const QRBitBuffer &encoded);

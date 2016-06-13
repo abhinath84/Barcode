@@ -24,11 +24,13 @@ namespace QR
       QRDataEncode();
       QRDataEncode(const string &input, const ECL &ecl);
       QRDataEncode(const QRDataEncode &other);
-      virtual ~QRDataEncode() = 0;
+      ~QRDataEncode();
 
       QRDataEncode& operator=(const QRDataEncode &other);
 
       /// Methods
+      int getMode()const;
+      void setMode(int mode);
       string getInput() const;
       void setInput(const string &input);
       ECL getErrorCorrectionLevel() const;
@@ -43,17 +45,14 @@ namespace QR
       void setEncodedData(const vector<uint8_t> &data);
       void setEncodedData(const QRBitBuffer &data);
 
+      bool encode();
 
-    public:
-      virtual bool calculateVersion();
-      virtual bool calculateErrorCorrectionLevel();
-      virtual bool addModeIndicator();
-      virtual bool addCharCountIndicator();
-      virtual bool encode();
-
-    protected:
-      bool calculateVersion(int mode);
-      bool calculateErrorCorrectionLevel(int mode);
+    private:
+      bool encodeData();
+      bool calculateVersion();
+      bool calculateErrorCorrectionLevel();
+      bool addModeIndicator();
+      bool addCharCountIndicator();
       int getCCILength(int version, int datamode);
       bool appendPadBits();
       bool convertAndAppend(int val, int size);
@@ -61,7 +60,8 @@ namespace QR
       int getNumDataCodewords();
       int calculateCharacterCapacity(int mode, int version, const ECL &ecl);
 
-    protected:
+    private:
+      int           m_mode;
       string        m_input;
       ECL           m_ecl;
       int           m_version;
@@ -73,7 +73,7 @@ namespace QR
       static const int CAPACITY_TABLE[][4];
   };
 
-  class QRNumericEncode : public QRDataEncode
+  /*class QRNumericEncode : public QRDataEncode
   {
     public:
       QRNumericEncode();
@@ -89,9 +89,9 @@ namespace QR
       virtual bool addModeIndicator();
       virtual bool addCharCountIndicator();
       virtual bool encode();
-  };
+  };*/
 
-  class QRAlphanumericEncode : public QRDataEncode
+  /*class QRAlphanumericEncode : public QRDataEncode
   {
     public:
       QRAlphanumericEncode();
@@ -107,7 +107,7 @@ namespace QR
       virtual bool addModeIndicator();
       virtual bool addCharCountIndicator();
       virtual bool encode();
-  };
+  };*/
 
   //class QRByteEncode : public QRDataEncode
   //{
