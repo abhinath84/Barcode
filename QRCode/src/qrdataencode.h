@@ -49,6 +49,10 @@ namespace QR
 
     private:
       bool encodeData();
+      bool encodeNumeric();
+      bool encodeAlphanumeric();
+      bool encodeByte();
+      bool encodeKanji();
       bool calculateVersion();
       bool calculateErrorCorrectionLevel();
       bool addModeIndicator();

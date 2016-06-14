@@ -69,6 +69,7 @@ namespace QR
   /// Functionality
   bool isDigit(unsigned char c);
   bool isDigit(const string &input);
+  int getAlphanumeric(unsigned char c);
   bool isAlphaNumeric(unsigned char c);
   bool isAlphaNumeric(const string &input);
   bool isKanji(const string &input);

@@ -178,7 +178,7 @@ bool QRDataEncode::convertAndAppend(int val, int size)
     
   convertToByte(val, bits);
   if(bits.size() > 0)
-    m_encodedData.push_back(bits, 10);
+    m_encodedData.push_back(bits, size);
 
   return(status);
 }
@@ -374,6 +374,24 @@ int QRDataEncode::getCCILength(int version, int datamode)
 
 bool QRDataEncode::encodeData()
 {
+  bool status;
+
+  if(m_mode == 1)
+    status = encodeNumeric();
+  else if (m_mode == 2)
+    status = encodeAlphanumeric();
+  else if (m_mode == 3)
+    status = encodeByte();
+  else if(m_mode == 4)
+    status = encodeKanji();
+  else
+    status = false;
+
+  return(status);
+}
+
+bool QRDataEncode::encodeNumeric()
+{
   bool status = false;
   int split = 0, c_split = 0;
   int len = m_input.length();
@@ -408,11 +426,73 @@ bool QRDataEncode::encodeData()
       else
         status = convertAndAppend(split, 7);
     }
-
-    /// Break up into 8-bit codewords and add padded bytes if needed
-    if(status)
-      status = appendPadBits();
   }
+
+  return(status);
+}
+
+bool QRDataEncode::encodeAlphanumeric()
+{
+  bool status = false;
+  int len = m_input.length();
+
+  if(len > 0)
+  {
+    int digit = 0, count = 0;
+
+    for(int i = 0; i < len; ++i)
+    {
+      digit += getAlphanumeric(m_input[i]);
+      count++;
+
+      // if count == 1, collect digit and multiply by 45
+      if((count == 1) && (i < (len - 1)))
+        digit = digit * 45;
+
+      // if count == 2, collect digit and add with prev val
+      if(count == 2)
+      {
+        // convert to binary (having 11-bits) and store.
+        convertAndAppend(digit, 11);
+
+        // reset digit and count.
+        digit = count = 0;
+      }
+    }
+
+    // in case of odd input, convert to binary (having 6-bits) and store.
+    if(count > 0)
+      convertAndAppend(digit, 6);
+
+    status  = true;
+  }
+
+  return(status);
+}
+
+bool QRDataEncode::encodeByte()
+{
+  bool status = false;
+
+  int len = m_input.length();
+
+  if(len > 0)
+  {
+    for(int i = 0; i < len; ++i)
+    {
+      int digit = (int)m_input[i];
+      convertAndAppend(digit, 8);
+    }
+
+    status = true;
+  }
+
+  return(status);
+}
+
+bool QRDataEncode::encodeKanji()
+{
+  bool status = false;
 
   return(status);
 }
@@ -439,8 +519,10 @@ bool QRDataEncode::encode()
     if(status) status = addCharCountIndicator();
 
     /// 2.5 Encode input data using selected data mode
-    /// 2.6 Break up into 8-bit codewords and add padded bytes if needed
     if(status) status = encodeData();
+
+    /// 2.6 Break up into 8-bit codewords and add padded bytes if needed
+    if(status) status = appendPadBits();
   }
 
   return(status);

@@ -3,7 +3,8 @@
 using namespace QR;
 
 QRCode::QRCode()
-  :m_datamode(DM_NUL),
+  :m_input(),
+   m_datamode(DM_NUL),
    m_ecl(ECL_L),
    m_version(1),
    m_width(0),
@@ -12,7 +13,8 @@ QRCode::QRCode()
 }
 
 QRCode::QRCode(int version, const ECL &ecl)
-  :m_datamode(DM_NUL),
+  :m_input(),
+   m_datamode(DM_NUL),
    m_ecl(ecl),
    m_version(version),
    m_width(0),
@@ -21,11 +23,12 @@ QRCode::QRCode(int version, const ECL &ecl)
 }
 
 QRCode::QRCode(const QRCode &other)
-:m_datamode(other.m_datamode),
- m_ecl(other.m_ecl),
- m_version(other.m_version),
- m_width(other.m_width),
- m_encoded(other.m_encoded)
+  :m_input(other.m_input),
+   m_datamode(other.m_datamode),
+   m_ecl(other.m_ecl),
+   m_version(other.m_version),
+   m_width(other.m_width),
+   m_encoded(other.m_encoded)
 {
 }
 
@@ -33,6 +36,7 @@ QRCode& QRCode::operator=(const QRCode &other)
 {
   if(this != &other)
   {
+    setInput(other.m_input);
     m_datamode = other.m_datamode;
     m_ecl = other.m_ecl;
     m_version = other.m_version;
@@ -46,6 +50,15 @@ QRCode& QRCode::operator=(const QRCode &other)
 
 QRCode::~QRCode()
 {
+}
+
+void QRCode::setInput(const string &input)
+{
+  if(m_input.compare(input) != 0)
+  {
+    m_input.clear();
+    m_input.replace(m_input.begin(), m_input.end(), input);
+  }
 }
 
 void QRCode::setEncodedData(const QRBitBuffer &encoded)
@@ -114,17 +127,17 @@ vector<unsigned char> QRCode::getData() const
       return(NULL);
 }*/
 
-void QRCode::identifyDataMode(const string &input, const DATA_MODE &hint)
+void QRCode::identifyDataMode(const DATA_MODE &hint)
 {
-  if(input.empty())
+  if(m_input.empty())
     m_datamode = DM_NUL;
-  if(isDigit(input))
+  if(isDigit(m_input))
     m_datamode = DM_NUM;
-  else if(isAlphaNumeric(input))
+  else if(isAlphaNumeric(m_input))
     m_datamode = DM_AN;
   else if(hint == DM_KANJI)
   {
-    if(isKanji(input))
+    if(isKanji(m_input))
       m_datamode = DM_KANJI;
     else
       m_datamode = DM_8;
@@ -133,48 +146,16 @@ void QRCode::identifyDataMode(const string &input, const DATA_MODE &hint)
     m_datamode = DM_8;
 }
 
-bool QRCode::encodeData(const string &input)
+bool QRCode::encodeData()
 {
   bool status = false;
 
   if(m_datamode > DM_NUL)
   {
-    /*QRDataEncode *pDataEncode = NULL;
-
-    pDataEncode = getDataEncode();
-    if(pDataEncode != NULL)
-    {
-      pDataEncode->setInput(input);
-
-      /// 2.1 Choose the Error Correction Level (Pass as input)
-      pDataEncode->setErrorCorrectionLevel(m_ecl);
-
-      /// 2.2 Smallest version of the data
-      pDataEncode->calculateVersion();
-      pDataEncode->calculateErrorCorrectionLevel();
-
-      /// 2.3 Add the Mode Indicator
-      pDataEncode->addModeIndicator();
-
-      /// 2.4 Add the Character Count Indicator
-      pDataEncode->addCharCountIndicator();
-
-      /// 2.5 Encode input data using selected data mode
-      /// 2.6 Break up into 8-bit codewords and add padded bytes if needed
-      pDataEncode->encode();
-
-      /// set version, ECL, encoded data.
-      setEncodedData(pDataEncode->getEncodedData());
-      m_version = pDataEncode->getVersion();
-      m_ecl = pDataEncode->getErrorCorrectionLevel();
-
-      status = true;
-    }*/
-
     QRDataEncode qrDataEncode;
 
     /// necessary data
-    qrDataEncode.setInput(input);
+    qrDataEncode.setInput(m_input);
     qrDataEncode.setMode(m_datamode + 1);
     qrDataEncode.setErrorCorrectionLevel(m_ecl);
 
@@ -192,6 +173,13 @@ bool QRCode::encodeData(const string &input)
   return(status);
 }
 
+bool QRCode::appendErrorCorrection()
+{
+  bool status = false;
+
+  return(status);
+}
+
 void QRCode::encode(const string &input, const DATA_MODE &hint)
 {
   if( !input.empty() )
@@ -199,20 +187,24 @@ void QRCode::encode(const string &input, const DATA_MODE &hint)
     if((hint == DM_8) || (hint == DM_KANJI))
     {
       bool status = false;
+
+      /// set the input.
+      setInput(input);
+
       /// 1. Data Analysis
       ///   - get data mode according to the input string.
-      identifyDataMode(input, hint);
+      identifyDataMode(hint);
 
       /// 2. Data Encoding
-      status = encodeData(input);
-      if(status)
-      {
-        /// 3. Error Correction Coding
-        /// 4. Structure Final Message
-        /// 5. Module Placement in Matrix
-        /// 6. Data Masking
-        /// 7. Format and Version Information
-      }
+      status = encodeData();
+
+      /// 3. Error Correction Coding
+      if(status) status = appendErrorCorrection();
+
+      /// 4. Structure Final Message
+      /// 5. Module Placement in Matrix
+      /// 6. Data Masking
+      /// 7. Format and Version Information
     }
   }
 }

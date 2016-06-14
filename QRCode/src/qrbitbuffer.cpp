@@ -42,11 +42,11 @@ void QRBitBuffer::push_back(const vector<uint8_t> &val)
 
 void QRBitBuffer::push_back(const vector<uint8_t> &val, int size)
 {
-  int s_bits = m_bits.size();
+  int s_val = val.size();
 
-  if((s_bits > 0) && (size > 0) && (s_bits <= size))
+  if((size > 0) && (s_val <= size))
   {
-    int diff = size - s_bits;
+    int diff = size - s_val;
     for(int i = 0; i < size; ++i)
     {
       if(i < diff)

@@ -32,10 +32,8 @@ namespace QR
     return(status);
   }
 
-  bool isAlphaNumeric(unsigned char c)
+  int getAlphanumeric(unsigned char c)
   {
-    bool status = false;
-
     /// Alphabet-numeric data
     const signed char alphaNumeric_table[128] =
     {
@@ -49,8 +47,16 @@ namespace QR
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
     };
 
-    int ant_val = ((c & 0x80) ? -1 : alphaNumeric_table[(int)c]);
-    if(ant_val >= 0)
+    int val = ((c & 0x80) ? -1 : alphaNumeric_table[(int)c]);
+
+    return(val);
+  }
+
+  bool isAlphaNumeric(unsigned char c)
+  {
+    bool status = false;
+
+    if(getAlphanumeric(c) >= 0)
       status = true;
 
     return(status);
