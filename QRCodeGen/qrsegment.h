@@ -19,12 +19,14 @@ namespace QR
 
       QRSegment& operator=(const QRSegment &other);
 
+      DATA_MODE getMode() const;
       int getCharCountIndicatorSize(int version) const;
       int getInputSize() const;
       int getBitSize() const;
       uint8_t at(int pos) const;
 
       void make(const std::string &input);
+      void make(const std::vector<uint8_t> &data);
 
     private:
       bool setBits(const std::string &input);
@@ -33,6 +35,7 @@ namespace QR
       void makeNumeric(const std::string &input);
       void makeAlphanumeric(const std::string &input);
       void makeBytes(const std::string &input);
+      void makeBytes(const std::vector<uint8_t> &data);
       void nakeKanji(const std::string &input);
 
     private:

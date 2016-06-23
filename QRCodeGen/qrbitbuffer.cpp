@@ -40,7 +40,7 @@ std::vector<uint8_t> QRBitBuffer::getBytes() const
   return m_bits;
 }
 
-void QRBitBuffer::appendBits(unsigned int val, int len) 
+void QRBitBuffer::appendBits(uint32_t val, int len) 
 {
   if (len < 0 || len > 32 || (len < 32 && (val >> len) != 0))
     throw "Value out of range";

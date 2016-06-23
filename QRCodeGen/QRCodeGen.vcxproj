@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClInclude Include="qrbitbuffer.h" />
     <ClInclude Include="qrcode.h" />
+    <ClInclude Include="qrreedsolomongenerator.h" />
     <ClInclude Include="qrsegment.h" />
     <ClInclude Include="qrutility.h" />
   </ItemGroup>
@@ -85,6 +86,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="qrbitbuffer.cpp" />
     <ClCompile Include="qrcode.cpp" />
+    <ClCompile Include="qrreedsolomongenerator.cpp" />
     <ClCompile Include="qrsegment.cpp" />
     <ClCompile Include="qrutility.cpp" />
   </ItemGroup>

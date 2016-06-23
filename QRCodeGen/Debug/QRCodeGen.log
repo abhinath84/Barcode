@@ -1,22 +1,25 @@
-﻿Build started 23-06-2016 18:23:03.
-     1>Project "F:\PTC_Me\My Projects\C++\Others\Barcode\QRCodeGen\QRCodeGen.vcxproj" on node 2 (Rebuild target(s)).
+﻿Build started 24-06-2016 01:33:16.
+     1>Project "F:\Pool\C++\Barcode\QRCodeGen\QRCodeGen.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
-         G:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp qrbitbuffer.cpp qrcode.cpp qrsegment.cpp qrutility.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp qrbitbuffer.cpp qrcode.cpp qrreedsolomongenerator.cpp qrsegment.cpp qrutility.cpp
          qrutility.cpp
          qrsegment.cpp
+         qrreedsolomongenerator.cpp
          qrcode.cpp
          qrbitbuffer.cpp
          main.cpp
          Generating Code...
        Link:
-         G:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\PTC_Me\My Projects\C++\Others\Barcode\Debug\QRCodeGen.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\PTC_Me\My Projects\C++\Others\Barcode\Debug\QRCodeGen.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\PTC_Me\My Projects\C++\Others\Barcode\Debug\QRCodeGen.lib" /MACHINE:X86 Debug\main.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Pool\C++\Barcode\Debug\QRCodeGen.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\Pool\C++\Barcode\Debug\QRCodeGen.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Pool\C++\Barcode\Debug\QRCodeGen.lib" /MACHINE:X86 Debug\main.obj
          Debug\qrbitbuffer.obj
          Debug\qrcode.obj
+         Debug\qrreedsolomongenerator.obj
          Debug\qrsegment.obj
          Debug\qrutility.obj
-         QRCodeGen.vcxproj -> F:\PTC_Me\My Projects\C++\Others\Barcode\Debug\QRCodeGen.exe
-     1>Done Building Project "F:\PTC_Me\My Projects\C++\Others\Barcode\QRCodeGen\QRCodeGen.vcxproj" (Rebuild target(s)).
+     1>qrcode.obj : error LNK2019: unresolved external symbol "private: void __thiscall QR::QRCode::makeQRCode(int,enum QR::ERROR_CORRECTION_LEVEL const &,class std::vector<unsigned char,class std::allocator<unsigned char> > const &,int)" (?makeQRCode@QRCode@QR@@AAEXHABW4ERROR_CORRECTION_LEVEL@2@ABV?$vector@EV?$allocator@E@std@@@std@@H@Z) referenced in function "public: void __thiscall QR::QRCode::encodeSegments(class std::vector<class QR::QRSegment,class std::allocator<class QR::QRSegment> > const &,enum QR::ERROR_CORRECTION_LEVEL const &,int,int,int,bool)" (?encodeSegments@QRCode@QR@@QAEXABV?$vector@VQRSegment@QR@@V?$allocator@VQRSegment@QR@@@std@@@std@@ABW4ERROR_CORRECTION_LEVEL@2@HHH_N@Z)
+     1>F:\Pool\C++\Barcode\Debug\QRCodeGen.exe : fatal error LNK1120: 1 unresolved externals
+     1>Done Building Project "F:\Pool\C++\Barcode\QRCodeGen\QRCodeGen.vcxproj" (Rebuild target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:03.80
+Time Elapsed 00:00:02.51

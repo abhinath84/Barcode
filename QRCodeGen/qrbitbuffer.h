@@ -30,7 +30,7 @@ namespace QR
 
       // Appends the given number of bits of the given value to this sequence.
       // If 0 <= len <= 31, then this requires 0 <= val < 2^len.
-      void appendBits(unsigned int val, int len);
+      void appendBits(uint32_t val, int len);
 
       // Appends the data of the given segment to this bit buffer.
       void appendData(const QRSegment &seg);

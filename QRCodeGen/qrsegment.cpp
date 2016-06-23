@@ -46,6 +46,11 @@ QRSegment::~QRSegment()
 {
 }
 
+DATA_MODE QRSegment::getMode() const
+{
+  return(m_mode);
+}
+
 int QRSegment::getInputSize() const
 {
   return(m_inputSize);
@@ -113,6 +118,15 @@ void QRSegment::make(const std::string &input)
     {
       makeBytes(input);
     }
+  }
+}
+
+void QRSegment::make(const std::vector<uint8_t> &data)
+{
+  // Select the most efficient segment encoding automatically
+  if (data.size() > 0)
+  {
+    makeBytes(data);
   }
 }
 
@@ -234,6 +248,23 @@ void QRSegment::makeBytes(const std::string &input)
     this->m_inputSize = size;
     this->m_bitSize = size * 8;
     setBits(input);
+  }
+}
+
+void QRSegment::makeBytes(const std::vector<uint8_t> &data)
+{
+  int size = (int) data.size();
+
+  if(size > 0)
+  {
+    this->m_mode = DM_8;
+    this->m_inputSize = size;
+    this->m_bitSize = size * 8;
+
+    // reset
+    m_bits.clear();
+    std::copy(data.begin(), data.end(),
+                back_inserter(m_bits));
   }
 }
 
