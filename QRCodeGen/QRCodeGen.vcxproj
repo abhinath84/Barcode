@@ -76,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="bitmap.h" />
     <ClInclude Include="qrbitbuffer.h" />
     <ClInclude Include="qrcode.h" />
     <ClInclude Include="qrreedsolomongenerator.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="qrutility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bitmap.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="qrbitbuffer.cpp" />
     <ClCompile Include="qrcode.cpp" />

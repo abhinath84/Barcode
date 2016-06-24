@@ -1,11 +1,16 @@
 #ifndef QRCODE_H
 #define QRCODE_H
 
+#include <iostream>
+#include <sstream>
+#include <string>
 #include <algorithm>
 #include <vector>
 
+#include "qrutility.h"
 #include "qrbitbuffer.h"
 #include "qrsegment.h"
+#include "qrreedsolomongenerator.h"
 
 namespace QR
 {
@@ -20,6 +25,21 @@ namespace QR
 
       int getECLFormatBits();
       int getTotalBits(const std::vector<QRSegment> &segs, int version);
+      int getMask() const;
+      int getSize() const;
+
+      /* 
+      * Returns the color of the module (pixel) at the given coordinates, which is either 0 for white or 1 for black. The top
+      * left corner has the coordinates (x=0, y=0). If the given coordinates are out of bounds, then 0 (white) is returned.
+      */
+      int getModule(int x, int y) const;
+
+      /* 
+      * Based on the given number of border modules to add as padding, this returns a
+      * string whose contents represents an SVG XML file that depicts this QR Code symbol.
+      * Note that Unix newlines (\n) are always used, regardless of the platform.
+      */
+      std::string toSvgString(int border) const;
 
       /* 
       * Returns a QR Code symbol representing the given Unicode text string at the given error correction level.
@@ -48,6 +68,11 @@ namespace QR
                             int minVersion=1, int maxVersion=40, int mask=-1, bool boostEcl=true);  // All optional parameters
 
     private:
+      // Returns a set of positions of the alignment patterns in ascending order. These positions are
+      // used on both the x and y axes. Each value in the resulting array is in the range [0, 177).
+      // This stateless pure function could be implemented as table of 40 variable-length lists of unsigned bytes.
+      std::vector<int> getAlignmentPatternPositions(int version);
+
       // Returns the number of raw data modules (bits) available at the given version number.
       // These data modules are used for both user data codewords and error correction codewords.
       // This stateless pure function could be implemented as a 40-entry lookup table.
@@ -58,7 +83,51 @@ namespace QR
       // This stateless pure function could be implemented as a (40*4)-cell lookup table.
       int getDataCodewordsCount(int version, const ECL &ecl);
 
+      // Sets the color of a module and marks it as a function module.
+      // Only used by the constructor. Coordinates must be in range.
+      void setFunctionModule(int x, int y, bool isBlack);
+
+      // Draws a 9*9 finder pattern including the border separator, with the center module at (x, y).
+      void drawFinderPattern(int x, int y);
+
+      // Draws a 5*5 alignment pattern, with the center module at (x, y).
+      void drawAlignmentPattern(int x, int y);
+
+      // Draws two copies of the format bits (with its own error correction code)
+      // based on the given mask and this object's error correction level field.
+      void drawFormatBits(int mask);
+
+      // Draws two copies of the version bits (with its own error correction code),
+      // based on this object's version field (which only has an effect for 7 <= version <= 40).
+      void drawVersion();
+
+      // XORs the data modules in this QR Code with the given mask pattern. Due to XOR's mathematical
+      // properties, calling applyMask(m) twice with the same value is equivalent to no change at all.
+      // This means it is possible to apply a mask, undo it, and try another mask. Note that a final
+      // well-formed QR Code symbol needs exactly one mask applied (not zero, not two, etc.).
+      void applyMask(int mask);
+
+      // Calculates and returns the penalty score based on state of this QR Code's current modules.
+      // This is used by the automatic mask choice algorithm to find the mask pattern that yields the lowest score.
+      int getPenaltyScore() const;
+
+      void drawFunctionPatterns();
+
+      // Returns a new byte string representing the given data with the appropriate error correction
+      // codewords appended to it, based on this object's version and error correction level.
+      std::vector<uint8_t> appendErrorCorrection(const std::vector<uint8_t> &data);
+
+      // Draws the given sequence of 8-bit codewords (data and error correction) onto the entire
+      // data area of this QR Code symbol. Function modules need to be marked off before this is called.
+      void drawCodewords(const std::vector<uint8_t> &data);
+
+      // A messy helper function for the constructors. This QR Code must be in an unmasked state when this
+      // method is called. The given argument is the requested mask, which is -1 for auto or 0 to 7 for fixed.
+      // This method applies and returns the actual mask chosen, from 0 to 7.
+      int handleConstructorMasking(int mask);
+
       void makeQRCode(int version, const ECL &ecl, const std::vector<uint8_t> &dataCodewords, int mask);
+      void makeQRCode(const QRCode &qr, int mask);
 
     private:
       /* This QR Code symbol's version number, which is always between 1 and 40 (inclusive). */
@@ -71,13 +140,19 @@ namespace QR
       /* The error correction level used in this QR Code symbol. */
       ECL m_ecl;
 
-      int mask;
+      int m_mask;
 
       // Private grids of modules/pixels (conceptually immutable)
       std::vector<std::vector<bool>> m_modules;     // The modules of this QR Code symbol (false = white, true = black)
       std::vector<std::vector<bool>> m_isFunction;  // Indicates function modules that are not subjected to masking
 
     private:
+      // For use in getPenaltyScore(), when evaluating which mask is best.
+      static const int PENALTY_N1;
+      static const int PENALTY_N2;
+      static const int PENALTY_N3;
+      static const int PENALTY_N4;
+
       static const int16_t NUM_ERROR_CORRECTION_CODEWORDS[4][41];
       static const int8_t NUM_ERROR_CORRECTION_BLOCKS[4][41];
   };

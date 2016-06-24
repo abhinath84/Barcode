@@ -5,6 +5,8 @@
 
 namespace QR
 {
+  #define INT32_MAX        2147483647i32
+
   /// define system datatype
   typedef unsigned char     uint8_t;
   typedef unsigned short    uint16_t;
@@ -12,6 +14,7 @@ namespace QR
   typedef unsigned long int uint64_t;
   typedef signed char       int8_t;
   typedef short             int16_t;
+  typedef int               int32_t;
 
   //!  @enum  DATA_MODE
   /*!
@@ -22,7 +25,7 @@ namespace QR
   typedef enum DATA_MODE
   {
     DM_NUL    = -1,  ///< Terminator (NUL character). Internal use only
-    DM_NUM    = 0,   ///< Numeric mode
+    DM_NUM    = 1,   ///< Numeric mode
     DM_AN     = 2,        ///< Alphabet-numeric mode
     DM_8      = 4,         ///< 8-bit data mode
     DM_KANJI  = 8,     ///< Kanji (shift-jis) mode

@@ -58,12 +58,12 @@ int QRSegment::getInputSize() const
 
 int QRSegment::getBitSize() const
 {
-  return(1);
+  return(m_bitSize);
 }
 
 uint8_t QRSegment::at(int pos) const
 {
-  return(1);
+  return(m_bits[pos]);
 }
 
 int QRSegment::getCharCountIndicatorSize(int version) const
@@ -79,7 +79,7 @@ int QRSegment::getCharCountIndicatorSize(int version) const
                                       };
 
   /// get array position according to the DATA_MODE
-  if(m_mode == 0)
+  if(m_mode == 1)
     datamode = 0;
   else if(m_mode == 2)
     datamode = 1;
