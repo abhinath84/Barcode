@@ -11,7 +11,7 @@ QRSegment::QRSegment()
 {
 }
 
-QRSegment::QRSegment(const DATA_MODE &md, int inputSize, const std::vector<uint8_t> &bits, int bitSize)
+QRSegment::QRSegment(const DATA_MODE &md, int inputSize, const ui8vector &bits, int bitSize)
   :m_mode(md),
   m_inputSize(inputSize),
   m_bits(bits),
@@ -103,30 +103,30 @@ int QRSegment::getCharCountIndicatorSize(int version) const
   return(len);
 }
 
-void QRSegment::make(const std::string &input)
+void QRSegment::create(const std::string &input)
 {
   // Select the most efficient segment encoding automatically
   if (input.size() > 0)
   {
     if (isDigit(input))
-      makeNumeric(input);
+      createNumeric(input);
     else if (isAlphaNumeric(input))
-      makeAlphanumeric(input);
-    else if (isKanji(input))
-      nakeKanji(input);
+      createAlphanumeric(input);
+    /*else if (isKanji(input))
+      createKanji(input);*/
     else
     {
-      makeBytes(input);
+      createBytes(input);
     }
   }
 }
 
-void QRSegment::make(const std::vector<uint8_t> &data)
+void QRSegment::create(const ui8vector &data)
 {
   // Select the most efficient segment encoding automatically
   if (data.size() > 0)
   {
-    makeBytes(data);
+    createBytes(data);
   }
 }
 
@@ -149,7 +149,7 @@ bool QRSegment::setBits(const std::string &input)
 }
 
 bool QRSegment::setSegment(const DATA_MODE &dm, int inputSize, 
-                            const std::vector<uint8_t> &bits, int bitSize)
+                            const ui8vector &bits, int bitSize)
 {
   bool status = false;
 
@@ -173,7 +173,7 @@ bool QRSegment::setSegment(const DATA_MODE &dm, int inputSize,
   return(status);
 }
 
-void QRSegment::makeNumeric(const std::string &input)
+void QRSegment::createNumeric(const std::string &input)
 {
   int size = input.size();
 
@@ -202,7 +202,7 @@ void QRSegment::makeNumeric(const std::string &input)
   }
 }
 
-void QRSegment::makeAlphanumeric(const std::string &input)
+void QRSegment::createAlphanumeric(const std::string &input)
 {
   int size = input.size();
 
@@ -238,7 +238,7 @@ void QRSegment::makeAlphanumeric(const std::string &input)
   }
 }
 
-void QRSegment::makeBytes(const std::string &input)
+void QRSegment::createBytes(const std::string &input)
 {
   int size = (int) input.size();
 
@@ -251,7 +251,7 @@ void QRSegment::makeBytes(const std::string &input)
   }
 }
 
-void QRSegment::makeBytes(const std::vector<uint8_t> &data)
+void QRSegment::createBytes(const ui8vector &data)
 {
   int size = (int) data.size();
 
@@ -268,7 +268,21 @@ void QRSegment::makeBytes(const std::vector<uint8_t> &data)
   }
 }
 
-void QRSegment::nakeKanji(const std::string &input)
+void QRSegment::createKanji(const std::string &input)
 {
+  /*const char *p;
+  int ret;
+  int run;
 
+  p = input.c_str();
+  while(Split_identifyMode(p, hint) == QR_MODE_KANJI) 
+  {
+    p += 2;
+  }
+
+  run = p - string;
+  ret = QRinput_append(input, QR_MODE_KANJI, run, (unsigned char *)string);
+  if(ret < 0) return -1;
+
+  return run;*/
 }

@@ -256,8 +256,8 @@ public:
   void setSize(LONG width, LONG height);
   void setBitCount(WORD bitCount);
 
-  void writeToFile(char *filename);
-  void readFromFile(char *filename);
+  void writeToFile(const char *filename);
+  void readFromFile(const char *filename);
 
 private:
   DWORD calculatePixelArraySize() const;

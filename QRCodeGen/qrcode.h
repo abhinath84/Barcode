@@ -23,6 +23,7 @@ namespace QR
 
       QRCode& operator=(const QRCode &other);
 
+      /// Member variable get method
       int getECLFormatBits();
       int getTotalBits(const std::vector<QRSegment> &segs, int version);
       int getMask() const;
@@ -47,7 +48,7 @@ namespace QR
       * code points (not UTF-16 code units). The smallest possible QR Code version is automatically chosen for the output.
       * The ECC level of the result may be higher than the ecl argument if it can be done without increasing the version.
       */
-      void encodeText(const std::string &input, const ECL &ecl);
+      void encode(const std::string &input, const ECL &ecl, int mask = -1);
 
       /* 
       * Returns a QR Code symbol representing the given binary data string at the given error correction level.
@@ -55,7 +56,7 @@ namespace QR
       * bytes allowed is 2953. The smallest possible QR Code version is automatically chosen for the output.
       * The ECC level of the result may be higher than the ecl argument if it can be done without increasing the version.
       */
-      void encodeBinary(const std::vector<uint8_t> &data, const ECL &ecl);
+      void encode(const ui8vector &data, const ECL &ecl, int mask = -1);
 
       /* 
       * Returns a QR Code symbol representing the specified data segments with the specified encoding parameters.
@@ -64,8 +65,21 @@ namespace QR
       * between modes (such as alphanumeric and binary) to encode text more efficiently.
       * This function is considered to be lower level than simply encoding text or binary data.
       */
-      void encodeSegments(const std::vector<QRSegment> &segs, const ECL &ecl,
-                            int minVersion=1, int maxVersion=40, int mask=-1, bool boostEcl=true);  // All optional parameters
+      void encode(const std::vector<QRSegment> &segs, const ECL &ecl, int mask = -1);
+
+      void writeToBMP(const std::string &filename);
+      void writeToPNG(const std::string &filename);
+      void writeToJPEG(const std::string &filename);
+
+    private:
+      /* 
+      * Returns a QR Code symbol representing the specified data segments with the specified encoding parameters.
+      * The smallest possible QR Code version within the specified range is automatically chosen for the output.
+      * This function allows the user to create a custom sequence of segments that switches
+      * between modes (such as alphanumeric and binary) to encode text more efficiently.
+      * This function is considered to be lower level than simply encoding text or binary data.
+      */
+      //void encodeSegments(const std::vector<QRSegment> &segs, const ECL &ecl, int mask=-1, bool boostEcl=true);  // All optional parameters
 
     private:
       // Returns a set of positions of the alignment patterns in ascending order. These positions are
@@ -115,46 +129,43 @@ namespace QR
 
       // Returns a new byte string representing the given data with the appropriate error correction
       // codewords appended to it, based on this object's version and error correction level.
-      std::vector<uint8_t> appendErrorCorrection(const std::vector<uint8_t> &data);
+      ui8vector appendErrorCorrection(const ui8vector &data);
 
       // Draws the given sequence of 8-bit codewords (data and error correction) onto the entire
       // data area of this QR Code symbol. Function modules need to be marked off before this is called.
-      void drawCodewords(const std::vector<uint8_t> &data);
+      void drawCodewords(const ui8vector &data);
 
       // A messy helper function for the constructors. This QR Code must be in an unmasked state when this
       // method is called. The given argument is the requested mask, which is -1 for auto or 0 to 7 for fixed.
       // This method applies and returns the actual mask chosen, from 0 to 7.
       int handleConstructorMasking(int mask);
 
-      void makeQRCode(int version, const ECL &ecl, const std::vector<uint8_t> &dataCodewords, int mask);
+      void makeQRCode(int version, const ECL &ecl, const ui8vector &dataCodewords, int mask);
       void makeQRCode(const QRCode &qr, int mask);
 
     private:
-      /* This QR Code symbol's version number, which is always between 1 and 40 (inclusive). */
-      int m_version;
-	
-      /* The width and height of this QR Code symbol, measured in modules.
-	      * Always equal to version &times; 4 + 17, in the range 21 to 177. */
-      int m_size;
-	
-      /* The error correction level used in this QR Code symbol. */
-      ECL m_ecl;
-
-      int m_mask;
+      int m_version;    ///< Define version number for This QR Code symbol, which is always between 1 and 40 (inclusive).
+      int m_size;       ///< Define the width and height of this QR Code symbol, measured in modules.
+                        ///< Always equal to (version * 4 + 17), in the range 21 to 177.
+      ECL m_ecl;        ///< Define the error correction level used in this QR Code symbol.
+      int m_mask;       ///< Define the mask used in this QR code.
 
       // Private grids of modules/pixels (conceptually immutable)
-      std::vector<std::vector<bool>> m_modules;     // The modules of this QR Code symbol (false = white, true = black)
-      std::vector<std::vector<bool>> m_isFunction;  // Indicates function modules that are not subjected to masking
+      std::vector<std::vector<bool>> m_modules;     ///< Define he modules of this QR Code symbol (false = white, true = black)
+      std::vector<std::vector<bool>> m_isFunction;  ///< Define function modules that are not subjected to masking
 
     private:
+      static const int MIN_VERSION;     ///< Define minimum version number for QR Code.
+      static const int MAX_VERSION;     ///< Define maximum version number for QR Code.
+
       // For use in getPenaltyScore(), when evaluating which mask is best.
       static const int PENALTY_N1;
       static const int PENALTY_N2;
       static const int PENALTY_N3;
       static const int PENALTY_N4;
 
-      static const int16_t NUM_ERROR_CORRECTION_CODEWORDS[4][41];
-      static const int8_t NUM_ERROR_CORRECTION_BLOCKS[4][41];
+      static const int16_t ERROR_CORRECTION_CODEWORDS[4][41];
+      static const int8_t ERROR_CORRECTION_BLOCKS[4][41];
   };
 }
 

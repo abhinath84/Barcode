@@ -2,6 +2,7 @@
 #define QRUTILITY_H
 
 #include <iostream>
+#include <vector>
 
 namespace QR
 {
@@ -15,6 +16,8 @@ namespace QR
   typedef signed char       int8_t;
   typedef short             int16_t;
   typedef int               int32_t;
+
+  typedef std::vector<uint8_t>  ui8vector;
 
   //!  @enum  DATA_MODE
   /*!

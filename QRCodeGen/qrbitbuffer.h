@@ -26,7 +26,7 @@ namespace QR
       int getBitLength() const;
 
       // Returns a copy of all bytes, padding up to the nearest byte.
-      std::vector<uint8_t> getBytes() const;
+      ui8vector getBytes() const;
 
       // Appends the given number of bits of the given value to this sequence.
       // If 0 <= len <= 31, then this requires 0 <= val < 2^len.
@@ -36,8 +36,8 @@ namespace QR
       void appendData(const QRSegment &seg);
 
     private:
-      std::vector<uint8_t>  m_bits;
-      int                   m_len;
+      ui8vector  m_bits;
+      int        m_len;
   };
 }
 

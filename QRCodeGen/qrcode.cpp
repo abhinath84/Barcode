@@ -1,13 +1,17 @@
 #include "qrcode.h"
+#include "bitmap.h"
 
 using namespace QR;
+
+const int QRCode::MIN_VERSION = 1;
+const int QRCode::MAX_VERSION = 40;
 
 const int QRCode::PENALTY_N1 = 3;
 const int QRCode::PENALTY_N2 = 3;
 const int QRCode::PENALTY_N3 = 40;
 const int QRCode::PENALTY_N4 = 10;
 
-const int16_t QRCode::NUM_ERROR_CORRECTION_CODEWORDS[4][41] = {
+const int16_t QRCode::ERROR_CORRECTION_CODEWORDS[4][41] = {
   // Version: (note that index 0 is for padding, and is set to an illegal value)
   //0,  1,  2,  3,  4,  5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,   25,   26,   27,   28,   29,   30,   31,   32,   33,   34,   35,   36,   37,   38,   39,   40    Error correction level
   {-1,  7, 10, 15, 20, 26,  36,  40,  48,  60,  72,  80,  96, 104, 120, 132, 144, 168, 180, 196, 224, 224, 252, 270, 300,  312,  336,  360,  390,  420,  450,  480,  510,  540,  570,  570,  600,  630,  660,  720,  750},  // Low
@@ -16,7 +20,7 @@ const int16_t QRCode::NUM_ERROR_CORRECTION_CODEWORDS[4][41] = {
   {-1, 17, 28, 44, 64, 88, 112, 130, 156, 192, 224, 264, 308, 352, 384, 432, 480, 532, 588, 650, 700, 750, 816, 900, 960, 1050, 1110, 1200, 1260, 1350, 1440, 1530, 1620, 1710, 1800, 1890, 1980, 2100, 2220, 2310, 2430},  // High
 };
 
-const int8_t QRCode::NUM_ERROR_CORRECTION_BLOCKS[4][41] = {
+const int8_t QRCode::ERROR_CORRECTION_BLOCKS[4][41] = {
   // Version: (note that index 0 is for padding, and is set to an illegal value)
   //0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40    Error correction level
   {-1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4,  4,  4,  4,  4,  6,  6,  6,  6,  7,  8,  8,  9,  9, 10, 12, 12, 12, 13, 14, 15, 16, 17, 18, 19, 19, 20, 21, 22, 24, 25},  // Low
@@ -149,38 +153,42 @@ std::string QRCode::toSvgString(int border) const
   return sb.str();
 }
 
-void QRCode::encodeText(const std::string &input, const ECL &ecl) 
+void QRCode::encode(const std::string &input, const ECL &ecl, int mask) 
 {
   QRSegment seg;
-  seg.make(input);
+  seg.create(input);
 
   std::vector<QRSegment> segs;
   segs.push_back(seg);
   
-  encodeSegments(segs, ecl);
+  encode(segs, ecl, mask);
 }
 
-void QRCode::encodeBinary(const std::vector<uint8_t> &data, const ECL &ecl) 
+void QRCode::encode(const ui8vector &data, const ECL &ecl, int mask) 
 {
   QRSegment seg;
-  seg.make(data);
+  seg.create(data);
 
   std::vector<QRSegment> segs;
   segs.push_back(seg);
 
-  encodeSegments(segs, ecl);
+  encode(segs, ecl, mask);
 }
 
-void QRCode::encodeSegments(const std::vector<QRSegment> &segs, const ECL &ecl,
-                              int minVersion, int maxVersion, int mask, bool boostEcl) 
+//void QRCode::encode(const std::vector<QRSegment> &segs, const ECL &ecl, int mask)
+//{
+//  encodeSegments(segs, ecl, mask);
+//}
+
+//void QRCode::encodeSegments(const std::vector<QRSegment> &segs, const ECL &ecl, int mask, bool boostEcl) 
+void QRCode::encode(const std::vector<QRSegment> &segs, const ECL &ecl, int mask)
 {
-  if (!(1 <= minVersion && minVersion <= maxVersion && maxVersion <= 40) ||
-      (mask < -1) || (mask > 7))
+  if (((mask < -1) && (mask > 7)))
     throw "Invalid value";
 
   // Find the minimal version number to use
   int version, dataUsedBits;
-  for (version = minVersion; ; version++) 
+  for (version = MIN_VERSION; ; version++) 
   {
     int dataCapacityBits = getDataCodewordsCount(version, ecl) * 8;  // Number of data bits available
 
@@ -188,7 +196,7 @@ void QRCode::encodeSegments(const std::vector<QRSegment> &segs, const ECL &ecl,
     if (dataUsedBits != -1 && dataUsedBits <= dataCapacityBits)
       break;  // This version number is found to be suitable
 
-    if (version >= maxVersion)  // All versions in the range could not fit the given data
+    if (version >= MAX_VERSION)  // All versions in the range could not fit the given data
       throw "Data too long";
   }
 
@@ -197,13 +205,13 @@ void QRCode::encodeSegments(const std::vector<QRSegment> &segs, const ECL &ecl,
 
   // Increase the error correction level while the data still fits in the current version number
   ECL newEcl = ecl;
-  if (boostEcl) 
-  {
+  //if (boostEcl) 
+  //{
     if (dataUsedBits <= getDataCodewordsCount(version, ECL_M ) * 8)  newEcl = ECL_M;
     if (dataUsedBits <= getDataCodewordsCount(version, ECL_Q ) * 8)  newEcl = ECL_Q;
     if (dataUsedBits <= getDataCodewordsCount(version, ECL_H ) * 8)  newEcl = ECL_H;
-  }
-	
+  //}
+
   // Create the data bit string by concatenating all segments
   int dataCapacityBits = getDataCodewordsCount(version, newEcl) * 8;
   QRBitBuffer bits;
@@ -228,6 +236,48 @@ void QRCode::encodeSegments(const std::vector<QRSegment> &segs, const ECL &ecl,
 
   // Create the QR Code symbol
   makeQRCode(version, newEcl, bits.getBytes(), mask);
+}
+
+void QRCode::writeToBMP(const std::string &filename)
+{
+  if(m_size > 0)
+  {
+    int OUT_FILE_PIXEL_PRESCALER = 8;
+    // Output the bmp file
+    Bitmap bmp(m_size * OUT_FILE_PIXEL_PRESCALER, m_size * OUT_FILE_PIXEL_PRESCALER);
+
+    for(int y = 0; y < m_size; y++)
+    {
+        for(int x = 0; x < m_size; x++)
+        {
+          if (getModule(x, y) == 1)
+          {
+            for(int l = 0; l < OUT_FILE_PIXEL_PRESCALER; l++)
+            {
+              for(int n = 0; n < OUT_FILE_PIXEL_PRESCALER; n++)
+              {
+                bmp.setPixel(l + (x * OUT_FILE_PIXEL_PRESCALER), 
+                                  n + (y * OUT_FILE_PIXEL_PRESCALER), 
+                                  0xff, 0, 0);
+              }
+            }
+          }
+        }
+    }
+
+    // write to file
+    bmp.writeToFile(filename.c_str());
+  }
+}
+
+void QRCode::writeToPNG(const std::string &filename)
+{
+
+}
+
+void QRCode::writeToJPEG(const std::string &filename)
+{
+
 }
 
 std::vector<int> QRCode::getAlignmentPatternPositions(int version) 
@@ -277,15 +327,17 @@ int QRCode::getDataCodewordsCount(int version, const ECL &ecl)
   if (version < 1 || version > 40)
     throw "Version number out of range";
 
-  return (getRawDataModulesCount(version) / 8 - NUM_ERROR_CORRECTION_CODEWORDS[ecl][version]);
+  return (getRawDataModulesCount(version) / 8 - ERROR_CORRECTION_CODEWORDS[ecl][version]);
 }
 
-void QRCode::makeQRCode(int version, const ECL &ecl, const std::vector<uint8_t> &dataCodewords, int mask) 
+void QRCode::makeQRCode(int version, const ECL &ecl, const ui8vector &dataCodewords, int mask) 
 {
   // Initialize scalar fields
   this->m_version = version;
   this->m_size = (1 <= version && version <= 40 ? version * 4 + 17 : -1);  // Avoid signed overflow undefined behavior
   this->m_ecl = ecl;
+  this->m_modules.clear();
+  this->m_isFunction.clear();
 
   // Check arguments
   if (
@@ -304,7 +356,7 @@ void QRCode::makeQRCode(int version, const ECL &ecl, const std::vector<uint8_t> 
   // Draw function patterns, draw all codewords, do masking
   drawFunctionPatterns();
 
-  const std::vector<uint8_t> allCodewords(appendErrorCorrection(dataCodewords));
+  const ui8vector allCodewords(appendErrorCorrection(dataCodewords));
   drawCodewords(allCodewords);
   this->m_mask = handleConstructorMasking(mask);
 }
@@ -362,14 +414,14 @@ void QRCode::drawFunctionPatterns()
   drawVersion();
 }
 
-std::vector<uint8_t> QRCode::appendErrorCorrection(const std::vector<uint8_t> &data) 
+ui8vector QRCode::appendErrorCorrection(const ui8vector &data) 
 {
   if (data.size() != static_cast<unsigned int>(getDataCodewordsCount(m_version, m_ecl)))
     throw "Invalid argument";
 
   // Calculate parameter numbers
-  int numBlocks = NUM_ERROR_CORRECTION_BLOCKS[m_ecl][m_version];
-  int totalEcc = NUM_ERROR_CORRECTION_CODEWORDS[m_ecl][m_version];
+  int numBlocks = ERROR_CORRECTION_BLOCKS[m_ecl][m_version];
+  int totalEcc = ERROR_CORRECTION_CODEWORDS[m_ecl][m_version];
   if (totalEcc % numBlocks != 0)
     throw "Assertion error";
 
@@ -378,36 +430,41 @@ std::vector<uint8_t> QRCode::appendErrorCorrection(const std::vector<uint8_t> &d
   int shortBlockLen = getRawDataModulesCount(m_version) / 8 / numBlocks;
 
   // Split data into blocks and append ECC to each block
-  std::vector<std::vector<uint8_t>> blocks;
+  std::vector<ui8vector> blocks;
   const QRReedSolomonGenerator rs(blockEccLen);
 
-  for (int i = 0, k = 0; i < numBlocks; i++) {
-	  std::vector<uint8_t> dat;
-	  dat.insert(dat.begin(), data.begin() + k, data.begin() + (k + shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1)));
-	  k += dat.size();
-	  const std::vector<uint8_t> ecc(rs.getRemainder(dat));
-	  if (i < numShortBlocks)
-		  dat.push_back(0);
-	  dat.insert(dat.end(), ecc.begin(), ecc.end());
-	  blocks.push_back(dat);
+  for (int i = 0, k = 0; i < numBlocks; i++) 
+  {
+    ui8vector dat;
+    dat.insert(dat.begin(), data.begin() + k, data.begin() + (k + shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1)));
+    k += dat.size();
+
+    const ui8vector ecc(rs.getRemainder(dat));
+    if (i < numShortBlocks)
+      dat.push_back(0);
+
+    dat.insert(dat.end(), ecc.begin(), ecc.end());
+    blocks.push_back(dat);
   }
-	
+
   // Interleave (not concatenate) the bytes from every block into a single sequence
-  std::vector<uint8_t> result;
-  for (int i = 0; static_cast<unsigned int>(i) < blocks.at(0).size(); i++) {
-	  for (int j = 0; static_cast<unsigned int>(j) < blocks.size(); j++) {
-		  // Skip the padding byte in short blocks
-		  if (i != shortBlockLen - blockEccLen || j >= numShortBlocks)
-			  result.push_back(blocks.at(j).at(i));
-	  }
+  ui8vector result;
+  for (int i = 0; static_cast<unsigned int>(i) < blocks.at(0).size(); i++)
+  {
+    for (int j = 0; static_cast<unsigned int>(j) < blocks.size(); j++)
+    {
+      // Skip the padding byte in short blocks
+      if (i != shortBlockLen - blockEccLen || j >= numShortBlocks)
+        result.push_back(blocks.at(j).at(i));
+    }
   }
   if (result.size() != static_cast<unsigned int>(getRawDataModulesCount(m_version) / 8))
-	  throw "Assertion error";
+    throw "Assertion error";
 
   return result;
 }
 
-void QRCode::drawCodewords(const std::vector<uint8_t> &data) 
+void QRCode::drawCodewords(const ui8vector &data) 
 {
   if (data.size() != static_cast<unsigned int>(getRawDataModulesCount(m_version) / 8))
     throw "Invalid argument";

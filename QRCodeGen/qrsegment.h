@@ -12,44 +12,40 @@ namespace QR
   class QRSegment
   {
     public:
+      /// Default Constructor
       QRSegment();
-      QRSegment(const DATA_MODE &md, int inputSize, const std::vector<uint8_t> &bits, int bitSize);
+      QRSegment(const DATA_MODE &md, int inputSize, const ui8vector &bits, int bitSize);
       QRSegment(const QRSegment &other);
       ~QRSegment();
 
       QRSegment& operator=(const QRSegment &other);
 
+      /// get methods for member variables
       DATA_MODE getMode() const;
       int getCharCountIndicatorSize(int version) const;
       int getInputSize() const;
       int getBitSize() const;
       uint8_t at(int pos) const;
 
-      void make(const std::string &input);
-      void make(const std::vector<uint8_t> &data);
+      void create(const std::string &input);
+      void create(const ui8vector &data);
 
     private:
       bool setBits(const std::string &input);
-      bool setSegment(const DATA_MODE &dm, int inputSize, const std::vector<uint8_t> &bits, int bitSize);
+      bool setSegment(const DATA_MODE &dm, int inputSize, const ui8vector &bits, int bitSize);
 
-      void makeNumeric(const std::string &input);
-      void makeAlphanumeric(const std::string &input);
-      void makeBytes(const std::string &input);
-      void makeBytes(const std::vector<uint8_t> &data);
-      void nakeKanji(const std::string &input);
+      void createNumeric(const std::string &input);
+      void createAlphanumeric(const std::string &input);
+      void createBytes(const std::string &input);
+      void createBytes(const ui8vector &data);
+      void createKanji(const std::string &input);
 
     private:
-      /* The mode indicator for this segment. */
-      DATA_MODE m_mode;
-
-      /* The length of this segment's unencoded data, measured in characters. Always zero or positive. */
-      int m_inputSize;
-
-      /* The bits of this segment packed into a byte array in big endian. */
-      std::vector<uint8_t> m_bits;
-
-      /* The length of this segment's encoded data, measured in bits. Satisfies ceil(bitLength / 8) = data.size(). */
-      int m_bitSize;
+      DATA_MODE m_mode;   ///< Define the mode indicator for this segment.
+      int m_inputSize;    ///< Define the size of input character data. Always zero or positive.
+      ui8vector m_bits;   ///< Define the bits of this segment packed into a byte array in big endian.
+      int m_bitSize;      ///< Define the size of this segment's encoded data, measured in bits. 
+                          ///< Satisfies ceil(m_bitsize / 8) = m_bits.size().
   };
 }
 

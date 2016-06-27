@@ -33,7 +33,7 @@ namespace QR
       * Computes and returns the Reed-Solomon error correction codewords for the given sequence of data codewords.
       * The returned object is always a new byte array. This method does not alter this object's state (because it is immutable).
       */
-      std::vector<uint8_t> getRemainder(const std::vector<uint8_t> &data) const;
+      ui8vector getRemainder(const ui8vector &data) const;
 
     private:
       // Returns the product of the two given field elements modulo GF(2^8/0x11D). The arguments and result
@@ -43,7 +43,7 @@ namespace QR
     private:
       // Coefficients of the divisor polynomial, stored from highest to lowest power, excluding the leading term which
       // is always 1. For example the polynomial x^3 + 255x^2 + 8x + 93 is stored as the uint8 array {255, 8, 93}.
-      std::vector<uint8_t> m_coefficients;
+      ui8vector m_coefficients;
   };
 }
 

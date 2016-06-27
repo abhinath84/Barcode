@@ -35,7 +35,7 @@ int QRBitBuffer::getBitLength() const
   return(m_len);
 }
 
-std::vector<uint8_t> QRBitBuffer::getBytes() const 
+ui8vector QRBitBuffer::getBytes() const 
 {
   return m_bits;
 }

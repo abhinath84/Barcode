@@ -56,10 +56,10 @@ QRReedSolomonGenerator& QRReedSolomonGenerator::operator=(const QRReedSolomonGen
   return(*this);
 }
 
-std::vector<uint8_t> QRReedSolomonGenerator::getRemainder(const std::vector<uint8_t> &data) const 
+ui8vector QRReedSolomonGenerator::getRemainder(const ui8vector &data) const 
 {
   // Compute the remainder by performing polynomial division
-  std::vector<uint8_t> result(m_coefficients.size());
+  ui8vector result(m_coefficients.size());
   for (size_t i = 0; i < data.size(); i++) 
   {
     uint8_t factor = data[i] ^ result.at(0);

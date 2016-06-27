@@ -92,7 +92,7 @@ void Bitmap::setBitCount(WORD bitCount)
   this->m_bitmapInfoHeader.m_bitCount = bitCount;
 }
 
-void Bitmap::writeToFile(char *filename)
+void Bitmap::writeToFile(const char *filename)
 {
   DWORD pixelArraySize = calculatePixelArraySize();
 
@@ -123,7 +123,7 @@ void Bitmap::writeToFile(char *filename)
   }
 }
 
-void Bitmap::readFromFile(char *filename)
+void Bitmap::readFromFile(const char *filename)
 {
 
 }
