@@ -63,9 +63,21 @@ int QRSegment::getBitSize() const
 
 uint8_t QRSegment::at(int pos) const
 {
-  return(m_bits[pos]);
+  if((pos >=0) && (pos < (int)m_bits.size()))
+    return(m_bits[pos]);
+  else
+    return (-1);
 }
 
+/** @brief get size of Character Count Indicator.
+*
+*  Get size of Character Count Indicator according to the
+*  DATA_MODE of this segment and passing version number.
+*
+*  @param[in]   version the number of version.
+*
+*  @return size of Character Count Indicator.
+*/
 int QRSegment::getCharCountIndicatorSize(int version) const
 {
   int len = 0;
