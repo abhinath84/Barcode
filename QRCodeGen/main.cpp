@@ -7,7 +7,7 @@
 
 using namespace QR;
 
-#define OUT_FILE_PIXEL_PRESCALER  8											// Prescaler (number of pixels in bmp file for each QRCode pixel, on each dimension)
+#define OUT_FILE_PIXEL_PRESCALER  8               // Prescaler (number of pixels in bmp file for each QRCode pixel, on each dimension)
 
 /// Forward declaration
 void doBasicDemo();

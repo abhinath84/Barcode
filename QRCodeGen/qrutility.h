@@ -21,9 +21,10 @@ namespace QR
 
   //!  @enum  DATA_MODE
   /*!
-    Data modes for encoding text.Each mode encodes the text as a string of bits (1s and 0s),
+    Data modes for encoding text. Each mode encodes the text as a string of bits (1s and 0s),
     but each mode uses a different method for converting the text into bits.
     Each method is optimized to generate the shortest possible string of bits for that data type.
+    An unsigned 4-bit integer value (range 0 to 15) representing the mode indicator bits for this mode object.
   */
   typedef enum DATA_MODE
   {

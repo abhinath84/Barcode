@@ -53,6 +53,7 @@ namespace QR
       /// Assignment Operator
       QRSegment& operator=(const QRSegment &other);
 
+
  //<!
  //<! get methods for member variables
  //<!
@@ -101,20 +102,127 @@ namespace QR
       *
       *  @return uint8_t
       */
-      uint8_t   at(int pos) const;
+      uint8_t at(int pos) const;
 
-      /// Create Segment according to the input type,like: numeric, alphanumeric, kanji, byte (UTF-8)
+
+ //<!
+ //<! Create Segment according to the input string type, like: numeric, alphanumeric, kanji, byte (UTF-8)
+ //<!
+
+      /** @brief encode input string and create segment for the input string/data.
+      *
+      *  Encode input string/data according to their DATA_MODE.
+      *  Then fill all the member variables of QRSegment class for the
+      *  input string/data.
+      *
+      *  @param[in] input the input string to encode.
+      *
+      *  @return nothing.
+      */
       void create(const std::string &input);
+
+      /** @brief encode input string and create segment for the input string/data.
+      *
+      *  Encode input string/data according to their DATA_MODE.
+      *  Then fill all the member variables of QRSegment class for the
+      *  input string/data.
+      *
+      *  @param[in] data the data in bit format to encode.
+      *
+      *  @return nothing.
+      */
       void create(const std::vector<uint8_t> &data);
 
     private:
+      /** @brief set input string in bit format in m_bits member variable.
+      *
+      *  set input string in bit format in m_bits.
+      *  If m_bits contain any value previously, then that values will be erased
+      *  and m_bits will be filled by new bits.
+      *
+      *  @param[in] input the input string to set in bit format.
+      *
+      *  @return bool true  -> If set successfully
+      *               false -> If not.
+      */
       bool setBits(const std::string &input);
+
+      /** @brief set all the member variables with corresponding input.
+      *
+      *  @param[in] dm the DATA_MODE for this segment.
+      *  @param[in] inputSize the size of input string/data for this segment.
+      *  @param[in] bits the encoded data for this segment.
+      *  @param[in] bitSize the size of encoded data for this segment.
+      *
+      *  @return bool true  -> If set successfully
+      *               false -> If not.
+      */
       bool setSegment(const DATA_MODE &dm, int inputSize, const ui8vector &bits, int bitSize);
 
+      /** @brief encode input string in numeric mode (DM_NUM).
+      *
+      *  Check input string is digits or not. If it's digit, 
+      *  then encode input string in numeric mode.
+      *  Afterwards fill all the member variables of QRSegment class for the
+      *  input string/data.
+      *
+      *  @param[in] input the input string to encode.
+      *
+      *  @return nothing.
+      */
       void createNumeric(const std::string &input);
+
+      /** @brief encode input string in alphanumeric mode (DM_AN).
+      *
+      *  Check input string is alphanumeric or not. The characters allowed are:
+      *  0 to 9, A to Z (uppercase only), space, dollar, percent, asterisk, plus, hyphen, period, slash, colon.
+      *  If so, then encode input string in alphanumeric mode.
+      *  Afterwards fill all the member variables of QRSegment class for the
+      *  input string/data.
+      *
+      *  @param[in] input the input string to encode.
+      *
+      *  @return nothing.
+      */
       void createAlphanumeric(const std::string &input);
+
+      /** @brief encode input string in binary mode (DM_8).
+      *
+      *  Check input string is in binary form or not (UTF-8).
+      *  If so, then encode input string in binary mode.
+      *  Afterwards fill all the member variables of QRSegment class for the
+      *  input string/data.
+      *
+      *  @param[in] input the input string to encode.
+      *
+      *  @return nothing.
+      */
       void createBytes(const std::string &input);
+
+      /** @brief encode input string in binary mode (DM_8).
+      *
+      *  Check input string is in binary form or not (UTF-8).
+      *  If so, then encode input string in binary mode.
+      *  Afterwards fill all the member variables of QRSegment class for the
+      *  input string/data.
+      *
+      *  @param[in] data the data in bit format to encode.
+      *
+      *  @return nothing.
+      */
       void createBytes(const ui8vector &data);
+
+      /** @brief encode input string in kanji mode (DM_KANJI).
+      *
+      *  Check input string is in kanji form or not (Japanese characters).
+      *  If so, then encode input string in kanji mode.
+      *  Afterwards fill all the member variables of QRSegment class for the
+      *  input string/data.
+      *
+      *  @param[in] input the input string to encode.
+      *
+      *  @return nothing.
+      */
       void createKanji(const std::string &input);
 
     private:
