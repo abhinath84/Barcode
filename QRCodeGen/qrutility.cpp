@@ -82,6 +82,13 @@ namespace QR
     return(status);
   }
 
+  /** @brief check whether all the characters in the input string are kanji (Japanese) character or not.
+  *
+  *  @param[in]  input the input string to check.
+  *
+  *  @return bool  true   -> if its a set of kanji (Japanese) character.
+  *                false  -> if not.
+  */
   bool isKanji(const std::string &input)
   {
     bool status = false;
@@ -91,8 +98,10 @@ namespace QR
     c = input[0];
     d = input[1];
 
+    /// check for valid input
     if(d != '\0')
     {
+      /// Japanese characters take 2-bytes
       word = ((unsigned int)c << 8) | d;
       if((word >= 0x8140 && word <= 0x9ffc) || (word >= 0xe040 && word <= 0xebbf))
         status = true;
