@@ -249,32 +249,32 @@ void QRCode::writeToBMP(const std::string &filename)
 
     for(int y = 0; y < m_size; y++)
     {
-        for(int x = 0; x < m_size ; x++)
+      for(int x = 0; x < m_size ; x++)
+      {
+        if (getModule(x, y) == 1)
         {
-          if (getModule(x, y) == 1)
+          for(int l = 0; l < OUT_FILE_PIXEL_PRESCALER; l++)
           {
-            for(int l = 0; l < OUT_FILE_PIXEL_PRESCALER; l++)
+            for(int n = 0; n < OUT_FILE_PIXEL_PRESCALER; n++)
             {
-              for(int n = 0; n < OUT_FILE_PIXEL_PRESCALER; n++)
-              {
-                /// As height is a positive number, the bitmap is a bottom-up DIB 
-                /// and its origin is the lower-left corner.
-                /// So, we to swap row value, so that it's origin become lower-left corner.
-                /// So, we swap row value with it's max value.
-                /// Like: if current row is 0 and max row height is 24,
-                /// then x_pos_swap = 24(max row height) - 0(current row value ) + 1 (as array start's with 0-index).
+              /// As height is a positive number, the bitmap is a bottom-up DIB 
+              /// and its origin is the lower-left corner.
+              /// So, we to swap row value, so that it's origin become lower-left corner.
+              /// So, we swap row value with it's max value.
+              /// Like: if current row is 0 and max row height is 24,
+              /// then x_pos_swap = 24(max row height) - 0(current row value ) + 1 (as array start's with 0-index).
 
-                int x_pos = l + (x * OUT_FILE_PIXEL_PRESCALER);
-                int y_pos = n + (y * OUT_FILE_PIXEL_PRESCALER);
-                int x_pos_swap = (m_size * OUT_FILE_PIXEL_PRESCALER) - (x_pos + 1);
+              int x_pos = l + (x * OUT_FILE_PIXEL_PRESCALER);
+              int y_pos = n + (y * OUT_FILE_PIXEL_PRESCALER);
+              int x_pos_swap = (m_size * OUT_FILE_PIXEL_PRESCALER) - (x_pos + 1);
 
-                bmp.setPixel(x_pos_swap, 
-                              y_pos, 
-                              0xff, 0, 0);
-              }
+              bmp.setPixel(x_pos_swap, 
+                            y_pos, 
+                            0xff, 0, 0);
             }
           }
         }
+      }
     }
 
     // write to file
@@ -298,21 +298,21 @@ void QRCode::writeToJPEG(const std::string &filename)
 
     for(int y = 0; y < m_size; y++)
     {
-        for(int x = 0; x < m_size ; x++)
+      for(int x = 0; x < m_size ; x++)
+      {
+        if (getModule(x, y) == 1)
         {
-          if (getModule(x, y) == 1)
+          for(int l = 0; l < OUT_FILE_PIXEL_PRESCALER; l++)
           {
-            for(int l = 0; l < OUT_FILE_PIXEL_PRESCALER; l++)
+            for(int n = 0; n < OUT_FILE_PIXEL_PRESCALER; n++)
             {
-              for(int n = 0; n < OUT_FILE_PIXEL_PRESCALER; n++)
-              {
-                setJPEGPixel(l + (x * OUT_FILE_PIXEL_PRESCALER), 
-                              n + (y * OUT_FILE_PIXEL_PRESCALER), 
-                              0, 0, 0xff);
-              }
+              setJPEGPixel(l + (x * OUT_FILE_PIXEL_PRESCALER), 
+                            n + (y * OUT_FILE_PIXEL_PRESCALER), 
+                            0, 0, 0xff);
             }
           }
         }
+      }
     }
 
     WriteToFile(filename.c_str());

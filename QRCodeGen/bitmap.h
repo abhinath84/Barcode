@@ -1,6 +1,6 @@
 /**
 *  @file    bitmap.h
-*  @brief   class to handle bitmap file.
+*  @brief   class to handle bitmap image file.
 *
 *  Bitamp class provides methods for loading and saving raster images.
 *  An Bitmap object encapsulates a bitmap or a metafile and
