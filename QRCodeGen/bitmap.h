@@ -264,6 +264,7 @@ private:
   //bool  convertRGBAToFileFormat();
   int   getCurrentPos(int row, int col) const;
   void  setPixelLow(int row, int col, int red, int green, int blue, int alpha);
+  void reverse();
 
 private:
   BITMAPFILEHEADER  m_bitmapFileHeader;

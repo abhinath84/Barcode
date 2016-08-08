@@ -1,0 +1,24 @@
+﻿Build started 23-06-2016 01:17:21.
+     1>Project "F:\Pool\C++\Barcode\QRCode\QRCode.vcxproj" on node 2 (Rebuild target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp qrbitbuffer.cpp qrcode.cpp qrdataencode.cpp qrsegment.cpp qrutility.cpp
+         qrutility.cpp
+         qrsegment.cpp
+         qrdataencode.cpp
+         qrcode.cpp
+         qrbitbuffer.cpp
+         main.cpp
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Pool\C++\Barcode\Debug\QRCode.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\Pool\C++\Barcode\Debug\QRCode.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Pool\C++\Barcode\Debug\QRCode.lib" /MACHINE:X86 Debug\main.obj
+         Debug\qrbitbuffer.obj
+         Debug\qrcode.obj
+         Debug\qrdataencode.obj
+         Debug\qrsegment.obj
+         Debug\qrutility.obj
+         QRCode.vcxproj -> F:\Pool\C++\Barcode\Debug\QRCode.exe
+     1>Done Building Project "F:\Pool\C++\Barcode\QRCode\QRCode.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.35

@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bitmap", "Bitmap\Bitmap.vcxproj", "{B25CE230-80DB-4308-B309-8F86F6B73714}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QRCode", "QRCode\QRCode.vcxproj", "{DC6B2BA5-82A4-4232-9402-3F25110FDFC7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QRGenerator", "QRGenerator\QRGenerator.vcxproj", "{0FB1117B-C2F1-4222-90DA-9C498DCEEE43}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QRCodeGenerator", "QRCodeGenerator\QRCodeGenerator.vcxproj", "{9DBD45AF-1FBA-4587-B233-E3AAC605698A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QRCodeGen", "QRCodeGen\QRCodeGen.vcxproj", "{95EB51CE-2F2F-46DD-90E5-D033014B4AEF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B25CE230-80DB-4308-B309-8F86F6B73714}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B25CE230-80DB-4308-B309-8F86F6B73714}.Debug|Win32.Build.0 = Debug|Win32
+		{B25CE230-80DB-4308-B309-8F86F6B73714}.Release|Win32.ActiveCfg = Release|Win32
+		{B25CE230-80DB-4308-B309-8F86F6B73714}.Release|Win32.Build.0 = Release|Win32
+		{DC6B2BA5-82A4-4232-9402-3F25110FDFC7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DC6B2BA5-82A4-4232-9402-3F25110FDFC7}.Debug|Win32.Build.0 = Debug|Win32
+		{DC6B2BA5-82A4-4232-9402-3F25110FDFC7}.Release|Win32.ActiveCfg = Release|Win32
+		{DC6B2BA5-82A4-4232-9402-3F25110FDFC7}.Release|Win32.Build.0 = Release|Win32
+		{0FB1117B-C2F1-4222-90DA-9C498DCEEE43}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0FB1117B-C2F1-4222-90DA-9C498DCEEE43}.Debug|Win32.Build.0 = Debug|Win32
+		{0FB1117B-C2F1-4222-90DA-9C498DCEEE43}.Release|Win32.ActiveCfg = Release|Win32
+		{0FB1117B-C2F1-4222-90DA-9C498DCEEE43}.Release|Win32.Build.0 = Release|Win32
+		{9DBD45AF-1FBA-4587-B233-E3AAC605698A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9DBD45AF-1FBA-4587-B233-E3AAC605698A}.Debug|Win32.Build.0 = Debug|Win32
+		{9DBD45AF-1FBA-4587-B233-E3AAC605698A}.Release|Win32.ActiveCfg = Release|Win32
+		{9DBD45AF-1FBA-4587-B233-E3AAC605698A}.Release|Win32.Build.0 = Release|Win32
+		{95EB51CE-2F2F-46DD-90E5-D033014B4AEF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{95EB51CE-2F2F-46DD-90E5-D033014B4AEF}.Debug|Win32.Build.0 = Debug|Win32
+		{95EB51CE-2F2F-46DD-90E5-D033014B4AEF}.Release|Win32.ActiveCfg = Release|Win32
+		{95EB51CE-2F2F-46DD-90E5-D033014B4AEF}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

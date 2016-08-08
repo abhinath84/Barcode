@@ -82,6 +82,7 @@
     <ClInclude Include="qrreedsolomongenerator.h" />
     <ClInclude Include="qrsegment.h" />
     <ClInclude Include="qrutility.h" />
+    <ClInclude Include="savejpg.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bitmap.cpp" />
@@ -91,6 +92,7 @@
     <ClCompile Include="qrreedsolomongenerator.cpp" />
     <ClCompile Include="qrsegment.cpp" />
     <ClCompile Include="qrutility.cpp" />
+    <ClCompile Include="savejpg.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

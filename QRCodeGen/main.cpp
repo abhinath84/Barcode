@@ -46,11 +46,12 @@ void doVarietyDemo()
   //qr0.encode("https://www.nayuki.io/", ECL_H, 3);
   //qr0.encode("314159265358979323846264338327950288419716939937510",
   //                ECL_M);
-  //qr0.encode("DOLLAR-AMOUNT:$39.87 PERCENTAGE:100.00% OPERATIONS:+-*/", 
-  //                ECL_H);
-  qr0.encode("\xE3\x81\x93\xE3\x82\x93\xE3\x81\xAB\xE3\x81\xA1wa\xE3\x80\x81\xE4\xB8\x96\xE7\x95\x8C\xEF\xBC\x81\x20\xCE\xB1\xCE\xB2\xCE\xB3\xCE\xB4",
-                  ECL_Q);
-  qr0.writeToBMP("doVarietyDemo-qr0.bmp");
+  qr0.encode("DOLLAR-AMOUNT:$39.87 PERCENTAGE:100.00% OPERATIONS:+-*/", 
+                  ECL_H);
+  //qr0.encode("\xE3\x81\x93\xE3\x82\x93\xE3\x81\xAB\xE3\x81\xA1wa\xE3\x80\x81\xE4\xB8\x96\xE7\x95\x8C\xEF\xBC\x81\x20\xCE\xB1\xCE\xB2\xCE\xB3\xCE\xB4",
+  //                ECL_Q);
+  //qr0.writeToBMP("doVarietyDemo-qr0.bmp");
+  qr0.writeToJPEG("doVarietyDemo-qr0.jpg");
   //qr0.encode(
   //  "Alice was beginning to get very tired of sitting by her sister on the bank, "
   //  "and of having nothing to do: once or twice she had peeped into the book her sister was reading, "

@@ -14,7 +14,7 @@ Bitmap::Bitmap(LONG imageWidth, LONG imageHeight)
   p_pixelArray(NULL)
 {
   m_bitmapInfoHeader.m_width = imageWidth;
-  m_bitmapInfoHeader.m_height = -imageHeight;
+  m_bitmapInfoHeader.m_height = imageHeight;
   m_bitmapFileHeader.m_size += calculatePixelArraySize();
 }
 
@@ -24,7 +24,7 @@ Bitmap::Bitmap(LONG imageWidth, LONG imageHeight, WORD bitCount)
   p_pixelArray(NULL)
 {
   m_bitmapInfoHeader.m_width = imageWidth;
-  m_bitmapInfoHeader.m_height = -imageHeight;
+  m_bitmapInfoHeader.m_height = imageHeight;
   m_bitmapInfoHeader.m_bitCount = bitCount;
   m_bitmapFileHeader.m_size += calculatePixelArraySize();
 }
@@ -111,6 +111,10 @@ void Bitmap::writeToFile(const char *filename)
 
     fclose(p_file);
   }*/
+
+  /// reverse the array as its bottom up approach.
+  //if(m_bitmapInfoHeader.m_height > 0)
+  //  reverse();
 
   fs.open(filename, ios::out|ios::binary);
   if(fs.is_open())
@@ -239,4 +243,32 @@ int Bitmap::getCurrentPos(int row, int col) const
     }
 
     return(pos);
+}
+
+void Bitmap::reverse()
+{
+  unsigned char *tmp;
+  DWORD pixelArraySize = calculatePixelArraySize();
+
+  if(pixelArraySize > 0)
+  {
+    tmp = (unsigned char*)malloc(pixelArraySize);
+    memset(tmp, 0xff, pixelArraySize);
+
+    int j = pixelArraySize ;
+    for(int i = 0; i < (int)(pixelArraySize - 3); i = i + 3)
+    {
+      //int j = (i + 1) * 3;
+      j = j - 3;
+      //cout << i << ",   " << j << ",   " << pixelArraySize << endl;
+      tmp[j] = p_pixelArray[i];
+      tmp[j-1] = p_pixelArray[i + 1];
+      tmp[j-2] = p_pixelArray[i + 2];
+    }
+
+    free(p_pixelArray);
+
+    p_pixelArray = tmp;
+    //p_pixelArray = tmp;
+  }
 }

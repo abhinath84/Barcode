@@ -1,0 +1,9 @@
+﻿Build started 23-06-2016 01:11:09.
+     1>Project "F:\Pool\C++\Barcode\QRGenerator\QRGenerator.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         QRGenerator.vcxproj -> F:\Pool\C++\Barcode\Debug\QRGenerator.exe
+     1>Done Building Project "F:\Pool\C++\Barcode\QRGenerator\QRGenerator.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.06
