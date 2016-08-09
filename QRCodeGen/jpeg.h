@@ -33,8 +33,28 @@ namespace JPEG
       Jpeg& operator=(const Jpeg &other);
 
     private:
-      FILE   *fp;
-      APPINFO m_app0;
+      void writebyte(const char byte);
+      void writeword(const WORD w);
+
+      /// write markers
+      void writeAPP();
+      void writeSOF();
+      void writeDQT();
+      void writeDHT();
+      void writeSOS();
+      void writeComment(BYTE *comment);
+      void writeBits(const bitstring &bs);
+
+    private:
+      /// marker
+      APPINFO   m_app0;
+      SOFINFO   m_sof0;
+      DQTINFO   m_dqt;
+      DHTINFO   m_dht;
+      SOSINFO   m_sos0;
+
+      RGB       *p_rgb;
+      FILE      *p_file;
   };
 }
 

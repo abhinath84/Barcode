@@ -40,6 +40,60 @@ namespace JPEG
                           35,36,48,49,57,58,62,63 
                          };
 
+  const BYTE std_dc_luminance_nrcodes[17]={0,0,1,5,1,1,1,1,1,1,0,0,0,0,0,0,0};
+  const BYTE std_dc_luminance_values[12]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+
+  const BYTE std_dc_chrominance_nrcodes[17]={0,0,3,1,1,1,1,1,1,1,1,1,0,0,0,0,0};
+  const BYTE std_dc_chrominance_values[12]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+
+  const BYTE std_ac_luminance_nrcodes[17]={0,0,2,1,3,3,2,4,3,5,5,4,4,0,0,1,0x7d };
+  const BYTE std_ac_luminance_values[162]= {
+        0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12,
+        0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07,
+        0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xa1, 0x08,
+        0x23, 0x42, 0xb1, 0xc1, 0x15, 0x52, 0xd1, 0xf0,
+        0x24, 0x33, 0x62, 0x72, 0x82, 0x09, 0x0a, 0x16,
+        0x17, 0x18, 0x19, 0x1a, 0x25, 0x26, 0x27, 0x28,
+        0x29, 0x2a, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
+        0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
+        0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59,
+        0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
+        0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
+        0x7a, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89,
+        0x8a, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98,
+        0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7,
+        0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6,
+        0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3, 0xc4, 0xc5,
+        0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2, 0xd3, 0xd4,
+        0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xe1, 0xe2,
+        0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea,
+        0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8,
+        0xf9, 0xfa };
+
+  const BYTE std_ac_chrominance_nrcodes[17]={0,0,2,1,2,4,4,3,4,7,5,4,4,0,1,2,0x77};
+  const BYTE std_ac_chrominance_values[162]={
+        0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
+        0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71,
+        0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 0x42, 0x91,
+        0xa1, 0xb1, 0xc1, 0x09, 0x23, 0x33, 0x52, 0xf0,
+        0x15, 0x62, 0x72, 0xd1, 0x0a, 0x16, 0x24, 0x34,
+        0xe1, 0x25, 0xf1, 0x17, 0x18, 0x19, 0x1a, 0x26,
+        0x27, 0x28, 0x29, 0x2a, 0x35, 0x36, 0x37, 0x38,
+        0x39, 0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x49, 0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
+        0x59, 0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+        0x69, 0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
+        0x79, 0x7a, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
+        0x88, 0x89, 0x8a, 0x92, 0x93, 0x94, 0x95, 0x96,
+        0x97, 0x98, 0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5,
+        0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4,
+        0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3,
+        0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2,
+        0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda,
+        0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9,
+        0xea, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8,
+        0xf9, 0xfa };
+
   //!  @struct  APPInfo
   /*!
     This structure contains information about the Application
@@ -159,17 +213,16 @@ namespace JPEG
     }
 
     SOFInfo(const WORD marker, const WORD len, const BYTE precision, const WORD height, const WORD width,
-              const BYTE components, const BYTE idY, const BYTE idCb, const BYTE idCr, const BYTE sfY,
-              const BYTE sfCb, const BYTE sfCr, const BYTE qtY, const BYTE qtCb, const BYTE qtCr)
+              const BYTE components, const SOFComponent compY, const SOFComponent compCb, const SOFComponent compCr)
       :m_marker       (marker),
       m_len           (len),
       m_precision     (precision),
       m_height        (height),
       m_width         (width),
       m_components    (components),
-      m_compY         (idY, sfY, qtY),
-      m_compCb        (idCb, sfCb, qtCb),
-      m_compCr        (idCr, sfCr, qtCr)
+      m_compY         (compY),
+      m_compCb        (compCb),
+      m_compCr        (compCr)
     {
     }
 
@@ -199,11 +252,11 @@ namespace JPEG
   typedef struct DQTInfo
   {
     DQTInfo()
-      :m_marker(0xFFDB),
-      m_len(132),
-      m_scaleFactor(50),
-      m_infoY(0),
-      m_infoCb(1)
+      :m_marker       (0xFFDB),
+      m_len           (132),
+      m_scaleFactor   (50),
+      m_infoY         (0),
+      m_infoCb        (1)
     {
       setQuantizationTableForY();
       setQuantizationTableForCb();
@@ -211,11 +264,11 @@ namespace JPEG
 
     DQTInfo(const WORD marker, const WORD len, const BYTE scaleFactor,  
             const BYTE infoY, const BYTE infoCb)
-      :m_marker(marker),
-      m_len(len),
-      m_scaleFactor(scaleFactor),
-      m_infoY(infoY),
-      m_infoCb(infoCb)
+      :m_marker       (marker),
+      m_len           (len),
+      m_scaleFactor   (scaleFactor),
+      m_infoY         (infoY),
+      m_infoCb        (infoCb)
     {
       setQuantizationTableForY();
       setQuantizationTableForCb();
@@ -292,37 +345,191 @@ namespace JPEG
 
   } DQTINFO;
 
+
+  //!  @struct  HTComponent
+  /*!
+    This structure contains information about the Huffman Table
+     components for the JPEG file.
+  */
   struct HTComponent
   {
+    HTComponent()
+      :m_index    (0),
+      m_type      (-1)
+    {
+    }
+
+    HTComponent(const BYTE index, const BYTE type, const BYTE *nrcodes, const BYTE *values)
+      :m_index    (index),
+      m_type      (type)
+    {
+      int nrcode_size = strlen((const char *)nrcodes);
+      int values_size = strlen((const char *)values);
+
+      /// Allocate memory
+      m_nrcodes = new BYTE[nrcode_size - 1];
+      m_values = new BYTE[values_size];
+
+      for (int i = 0; i < (nrcode_size - 1); i++)
+        m_nrcodes[i]=nrcodes[i+1];
+
+      for (int i = 0; i < values_size; i++)
+        m_values[i]=values[i];
+    }
+
     /// member variables
     BYTE m_index;
     BYTE m_type;          // DC = 0, AC = 1
-    BYTE m_nrcodes[16];
-    BYTE m_values[12];
+    BYTE *m_nrcodes;
+    BYTE *m_values;
   };
 
+
+  //!  @struct  DHTInfo
+  /*!
+    This structure contains information about the Huffman Table
+     marker for the JPEG file.
+  */
   typedef struct DHTInfo
   {
-    WORD marker;  // = 0xFFC4
-    WORD length;  //0x01A2
+    DHTInfo()
+      :m_marker   (0xFFC4),
+      m_len       (0x01A2),
+      m_YDC       (0, 0, std_dc_luminance_nrcodes, std_dc_luminance_values),
+      m_YAC       (0x10, 1, std_ac_luminance_nrcodes, std_ac_luminance_values),
+      m_CbDC      (1, 0, std_dc_chrominance_nrcodes, std_dc_chrominance_values),
+      m_CbAC      (0x11, 1, std_dc_chrominance_nrcodes, std_dc_chrominance_values)
+    {
+    }
 
-    BYTE HTYDCinfo; // bit 0..3: number of HT (0..3), for Y =0
-                    //bit 4  :type of HT, 0 = DC table,1 = AC table
-                    //bit 5..7: not used, must be 0
-    BYTE YDC_nrcodes[16]; //at index i = nr of codes with length i
-    BYTE YDC_values[12];
-    BYTE HTYACinfo; // = 0x10
-    BYTE YAC_nrcodes[16];
-    BYTE YAC_values[162];//we'll use the standard Huffman tables
-    BYTE HTCbDCinfo; // = 1
-    BYTE CbDC_nrcodes[16];
-    BYTE CbDC_values[12];
-    BYTE HTCbACinfo; //  = 0x11
-    BYTE CbAC_nrcodes[16];
-    BYTE CbAC_values[162];
+    DHTInfo(const WORD maker, const WORD len, 
+            const HTComponent yDC, const HTComponent yAC,
+            const HTComponent CbDC, const HTComponent CbAC)
+      :m_marker   (maker),
+      m_len       (len),
+      m_YDC       (yDC),
+      m_YAC       (yAC),
+      m_CbDC      (CbDC),
+      m_CbAC      (CbAC)
+    {
+    }
+
+    /// member variables
+    WORD m_marker;          ///< Define the Hoffman Table marker type, ie, SOF0 - SOF15. (2 byte)
+    WORD m_len;             ///< Define Quantization Table marker length. (2 byte)
+
+    HTComponent m_YDC;      ///< Define HT component for luminance color component of type DC
+    HTComponent m_YAC;      ///< Define HT component for luminance color component of type AC
+    HTComponent m_CbDC;     ///< Define HT component for chrominance color component of type DC
+    HTComponent m_CbAC;     ///< Define HT component for chrominance color component of type AC
 
   } DHTINFO;
 
+
+  //!  @struct  SOSInfo
+  /*!
+    This structure contains information about the Start of Scan
+     marker for the JPEG file.
+  */
+  typedef struct SOSInfo
+  {
+    SOSInfo()
+      :m_marker       (0xFFDA),
+      m_len           (12),
+      m_components    (3),
+      m_idY           (1),
+      m_HTY           (0),
+      m_idCb          (2),
+      m_HTCb          (0x11),
+      m_idCr          (3),
+      m_HTCr          (0x11),
+      m_Ss            (0),
+      m_Se            (0x3F),
+      m_Bf            (0)
+    {
+    }
+
+    SOSInfo(const WORD marker, const WORD len, const BYTE components,
+            const BYTE idY, const BYTE htY, const BYTE idCb, const BYTE htCb,
+            const BYTE idCr, const BYTE htCr, const BYTE ss, const BYTE se, const BYTE bf)
+      :m_marker       (marker),
+      m_len           (len),
+      m_components    (components),
+      m_idY           (idY),
+      m_HTY           (htY),
+      m_idCb          (idCb),
+      m_HTCb          (htCb),
+      m_idCr          (idCr),
+      m_HTCr          (htCr),
+      m_Ss            (ss),
+      m_Se            (se),
+      m_Bf            (bf)
+    {
+    }
+
+    ///member variables
+    WORD m_marker;  // = 0xFFDA
+    WORD m_len; // = 12
+    BYTE m_components; // Should be 3: truecolor JPG
+    BYTE m_idY; //1
+    BYTE m_HTY; //0 // bits 0..3: AC table (0..3)
+			    // bits 4..7: DC table (0..3)
+    BYTE m_idCb; //2
+    BYTE m_HTCb; //0x11
+    BYTE m_idCr; //3
+    BYTE m_HTCr; //0x11
+    BYTE m_Ss;
+    BYTE m_Se;
+    BYTE m_Bf; // not interesting, they should be 0,63,0
+
+  } SOSINFO;
+
+  //!  @struct  RGBApixel
+  /*!
+    This structure contains information about the color for each pixel of bitmap file.
+    It store the red, green, blue, alpha color information.
+  */
+  typedef struct RGBApixel
+  {
+    /// Default Constructor
+    RGBApixel()
+      :red (0xff),
+      green (0xff),
+      blue (0xff),
+      alpha (0xff)
+    {
+    }
+
+    /// Argumented Constructor
+    RGBApixel(unsigned char r, unsigned char g, unsigned char b)
+      :red (r),
+      green (g),
+      blue (b),
+      alpha (0)
+    {
+    }
+
+    /// Argumented Constructor
+    RGBApixel(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+      :red (r),
+      green (g),
+      blue (b),
+      alpha (a)
+    {
+    }
+
+    BYTE red;                ///< The value of red color (Range: 0 to 255)
+    BYTE green;              ///< The value of green color (Range: 0 to 255)
+    BYTE blue;               ///< The value of blue color (Range: 0 to 255)
+    BYTE alpha;              ///< The value of alpha (Range: 0 to 255)
+
+  }RGB;
+
+  typedef struct
+  { 
+    BYTE length;
+    WORD value;
+  } bitstring;
 }
 
 #endif  // end of JPEGINFO_H

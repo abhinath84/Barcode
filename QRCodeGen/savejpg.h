@@ -131,7 +131,18 @@ static struct SOSinfotype {
 		 BYTE Ss,Se,Bf; // not interesting, they should be 0,63,0
 } SOSinfo={0xFFDA,12,3,1,0,2,0x11,3,0x11,0,0x3F,0};
 
-typedef struct { BYTE B,G,R; } colorRGB;
+struct colorRGB
+{ 
+  colorRGB()
+    :B(0xff),
+    G(0xff),
+    R(0xff)
+  {
+  }
+
+  BYTE B,G,R; 
+};
+
 typedef struct { BYTE length;
 		 WORD value;} bitstring;
 
@@ -139,8 +150,8 @@ typedef struct { BYTE length;
 #define Cb(R,G,B) ((BYTE)( (CbRtab[(R)]+CbGtab[(G)]+CbBtab[(B)])>>16 ) )
 #define Cr(R,G,B) ((BYTE)( (CrRtab[(R)]+CrGtab[(G)]+CrBtab[(B)])>>16 ) )
 
-#define writebyte(b) fputc((b),fp_jpeg_stream)
-#define writeword(w) writebyte((w)/256);writebyte((w)%256);
+//#define writebyte(b) fputc((b),fp_jpeg_stream)
+//#define writeword(w) writebyte((w)/256);writebyte((w)%256);
 
 
 

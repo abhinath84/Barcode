@@ -26,7 +26,6 @@
 static BYTE bytenew=0; // The byte that will be written in the JPG file
 static SBYTE bytepos=7; //bit position in the byte we write (bytenew)
 			//should be<=7 and >=0
-static WORD mask[16]={1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768};
 
 // The Huffman tables we'll use:
 static bitstring YDC_HT[12];
@@ -62,6 +61,16 @@ static WORD wImage, hImage;
 
 /***************************************************************************/
 
+void writebyte(const char b)
+{
+  fputc(b, fp_jpeg_stream);
+}
+
+void writeword(const WORD w)
+{
+  writebyte((w)/256);
+  writebyte((w)%256);
+}
 
 void write_APP0info()
 //Nothing to overwrite for APP0info
@@ -186,18 +195,34 @@ void write_comment(BYTE *comment)
 void writebits(bitstring bs)
 // A portable version; it should be done in assembler
 {
- WORD value;
- SBYTE posval;//bit position in the bitstring we read, should be<=15 and >=0
- value=bs.value;
- posval=bs.length-1;
- while (posval>=0)
+   WORD value;
+   SBYTE posval;    //bit position in the bitstring we read, should be<=15 and >=0
+   const WORD mask[16] = {
+                          1,2,4,8,
+                          16,32,64,128,
+                          256,512,1024,2048,
+                          4096,8192,16384,32768
+                        };
+
+   value=bs.value;
+   posval=bs.length-1;
+   while (posval>=0)
   {
-   if (value & mask[posval]) bytenew|=mask[bytepos];
-   posval--;bytepos--;
-   if (bytepos<0) { if (bytenew==0xFF) {writebyte(0xFF);writebyte(0);}
-		     else {writebyte(bytenew);}
-		    bytepos=7;bytenew=0;
-		  }
+    if (value & mask[posval]) bytenew|=mask[bytepos];
+    posval--;bytepos--;
+    if (bytepos<0) 
+    {
+      if (bytenew==0xFF)
+      {
+        writebyte(0xFF);
+        writebyte(0);
+      }
+      else
+        writebyte(bytenew);
+
+      bytepos=7;
+      bytenew=0;
+    }
   }
 }
 
@@ -668,20 +693,9 @@ void WriteToFile(const char *filename)
 void setJPEGPixel(int row, int col, int red, int green, int blue)
 {
   if(RGB_buffer == NULL)
-  {
-    RGB_buffer=(colorRGB *)(malloc(3 * wImage * hImage));
-    //memset(RGB_buffer, 0, sizeof(RGB_buffer));
-
-    for(int i = 0; i < (wImage * wImage); i++)
-    {
-      RGB_buffer[i].R = (unsigned char)(0xff);
-      RGB_buffer[i].G = (unsigned char)(0xff);
-      RGB_buffer[i].B = (unsigned char)(0xff);
-    }
-  }
+    RGB_buffer = new colorRGB[3 * wImage * hImage];
 
   int i = row * wImage + col;
-
   RGB_buffer[i].R = (unsigned char)red;
   RGB_buffer[i].G = (unsigned char)green;
   RGB_buffer[i].B = (unsigned char)blue;
