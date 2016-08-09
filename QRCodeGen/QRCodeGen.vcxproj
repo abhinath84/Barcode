@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="jpeg.h" />
+    <ClInclude Include="jpeginfo.h" />
     <ClInclude Include="qrbitbuffer.h" />
     <ClInclude Include="qrcode.h" />
     <ClInclude Include="qrreedsolomongenerator.h" />

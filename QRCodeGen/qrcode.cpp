@@ -1,5 +1,6 @@
 #include "qrcode.h"
 #include "bitmap.h"
+#include "jpeg.h"
 #include "savejpg.h"
 
 using namespace QR;
@@ -292,6 +293,7 @@ void QRCode::writeToJPEG(const std::string &filename)
   if(m_size > 0)
   {
     int OUT_FILE_PIXEL_PRESCALER = 8;
+    JPEG::Jpeg jpg;
 
     setImageHeight(m_size * OUT_FILE_PIXEL_PRESCALER);
     setImageWidth(m_size * OUT_FILE_PIXEL_PRESCALER);

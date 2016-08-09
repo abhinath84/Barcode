@@ -39,6 +39,9 @@
     <ClInclude Include="jpeg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="jpeginfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="qrbitbuffer.cpp">

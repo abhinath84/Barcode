@@ -1,4 +1,4 @@
-﻿Build started 08-08-2016 18:10:52.
+﻿Build started 09-08-2016 17:10:51.
      1>Project "F:\PTC_Me\My Projects\C++\Others\Barcode\QRCodeGen\QRCodeGen.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          G:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt bitmap.cpp jpeg.cpp main.cpp qrbitbuffer.cpp qrcode.cpp qrreedsolomongenerator.cpp qrsegment.cpp qrutility.cpp savejpg.cpp
@@ -27,4 +27,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:06.30
+Time Elapsed 00:00:07.64
