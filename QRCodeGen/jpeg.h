@@ -41,7 +41,7 @@ namespace JPEG
       void writeSOF();
       void writeDQT();
       void writeDHT();
-      void writeHTComponent(const HTComponent &htc);
+      void writeHTComponent(const DHTComponent &htc);
       void writeSOS();
       void writeComment(BYTE *comment);
       void writeBits(const bitstring &bs);
@@ -53,6 +53,9 @@ namespace JPEG
       DQTINFO   m_dqt;
       DHTINFO   m_dht;
       SOSINFO   m_sos0;
+
+      HT        m_htY;
+      HT        m_htCb;
 
       RGB       *p_rgb;
       FILE      *p_file;

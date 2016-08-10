@@ -141,7 +141,7 @@ void Jpeg::writeDHT()
   writeHTComponent(m_dht.m_CbAC);
 }
 
-void Jpeg::writeHTComponent(const HTComponent &htc)
+void Jpeg::writeHTComponent(const DHTComponent &htc)
 {
   writebyte(htc.m_index);
   for (int i = 0; i < htc.m_nrcodeSize; i++)

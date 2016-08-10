@@ -20,9 +20,6 @@
 
 namespace JPEG
 {
-  ///#define
-  #define SIZE(str) (sizeof(str)/sizeof(BYTE))
-
   /// typedef
   typedef unsigned char       BYTE ;
   typedef signed char         SBYTE;
@@ -350,14 +347,14 @@ namespace JPEG
   } DQTINFO;
 
 
-  //!  @struct  HTComponent
+  //!  @struct  DHTComponent
   /*!
     This structure contains information about the Huffman Table
      components for the JPEG file.
   */
-  struct HTComponent
+  struct DHTComponent
   {
-    HTComponent()
+    DHTComponent()
       :m_index      (0),
       m_type        (-1),
       m_nrcodeSize  (0),
@@ -365,7 +362,7 @@ namespace JPEG
     {
     }
 
-    HTComponent(const BYTE index, const BYTE type, const BYTE *nrcodes, 
+    DHTComponent(const BYTE index, const BYTE type, const BYTE *nrcodes, 
                 const int nrSize, const BYTE *values, const int valSize)
       :m_index      (index),
       m_type        (type),
@@ -414,8 +411,8 @@ namespace JPEG
     }
 
     DHTInfo(const WORD maker, const WORD len, 
-            const HTComponent yDC, const HTComponent yAC,
-            const HTComponent CbDC, const HTComponent CbAC)
+            const DHTComponent yDC, const DHTComponent yAC,
+            const DHTComponent CbDC, const DHTComponent CbAC)
       :m_marker   (maker),
       m_len       (len),
       m_YDC       (yDC),
@@ -429,10 +426,10 @@ namespace JPEG
     WORD m_marker;          ///< Define the Hoffman Table marker type, ie, SOF0 - SOF15. (2 byte)
     WORD m_len;             ///< Define Quantization Table marker length. (2 byte)
 
-    HTComponent m_YDC;      ///< Define HT component for luminance color component of type DC
-    HTComponent m_YAC;      ///< Define HT component for luminance color component of type AC
-    HTComponent m_CbDC;     ///< Define HT component for chrominance color component of type DC
-    HTComponent m_CbAC;     ///< Define HT component for chrominance color component of type AC
+    DHTComponent m_YDC;      ///< Define HT component for luminance color component of type DC
+    DHTComponent m_YAC;      ///< Define HT component for luminance color component of type AC
+    DHTComponent m_CbDC;     ///< Define HT component for chrominance color component of type DC
+    DHTComponent m_CbAC;     ///< Define HT component for chrominance color component of type AC
 
   } DHTINFO;
 
@@ -541,6 +538,47 @@ namespace JPEG
     BYTE length;
     WORD value;
   } bitstring;
+
+  struct HT
+  {
+    public:
+      HT()
+        :m_dc(),
+        m_ac()
+      {
+      }
+
+      /// member variables
+      bitstring m_dc[12];
+      bitstring m_ac[256];
+
+      void computeHuffmanTable(BYTE *dc_nrcodes, BYTE *dc_values,
+                                BYTE *ac_nrcodes, BYTE *ac_values)
+      {
+        computeHuffmanTable(dc_nrcodes, dc_values, m_dc);
+        computeHuffmanTable(ac_nrcodes, ac_values, m_ac);
+      }
+
+    private:
+      void computeHuffmanTable(BYTE *nrcodes, BYTE *values, bitstring *HT)
+      {
+        BYTE pos_in_table = 0;
+        WORD codevalue = 0;
+
+        for (int k = 1; k <= 16; k++)
+        {
+          for (int j = 1; j <= nrcodes[k]; j++) 
+          {
+            HT[values[pos_in_table]].value=codevalue;
+            HT[values[pos_in_table]].length=k;
+            pos_in_table++;
+            codevalue++;
+          }
+
+          codevalue*=2;
+        }
+      }
+  };
 }
 
 #endif  // end of JPEGINFO_H

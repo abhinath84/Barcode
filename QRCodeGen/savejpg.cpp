@@ -231,19 +231,22 @@ void writebits(bitstring bs)
 
 void compute_Huffman_table(BYTE *nrcodes,BYTE *std_table,bitstring *HT)
 {
- BYTE k,j;
- BYTE pos_in_table;
- WORD codevalue;
- codevalue=0; pos_in_table=0;
- for (k=1;k<=16;k++)
-   {
-     for (j=1;j<=nrcodes[k];j++) {HT[std_table[pos_in_table]].value=codevalue;
-				  HT[std_table[pos_in_table]].length=k;
-				  pos_in_table++;
-				  codevalue++;
-				 }
-     codevalue*=2;
-   }
+  BYTE k,j;
+  BYTE pos_in_table = 0;
+  WORD codevalue = 0;
+
+  for (k=1;k<=16;k++)
+  {
+    for (j=1;j<=nrcodes[k];j++) 
+    {
+      HT[std_table[pos_in_table]].value=codevalue;
+      HT[std_table[pos_in_table]].length=k;
+      pos_in_table++;
+      codevalue++;
+    }
+
+    codevalue*=2;
+  }
 }
 void init_Huffman_tables()
 {
