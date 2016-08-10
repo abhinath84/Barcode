@@ -208,8 +208,11 @@ void writebits(bitstring bs)
    posval=bs.length-1;
    while (posval>=0)
   {
-    if (value & mask[posval]) bytenew|=mask[bytepos];
-    posval--;bytepos--;
+    if (value & mask[posval]) 
+      bytenew|=mask[bytepos];
+
+    posval--;
+    bytepos--;
     if (bytepos<0) 
     {
       if (bytenew==0xFF)
@@ -262,45 +265,63 @@ void set_numbers_category_and_bitcode()
  BYTE cat;
 
  category_alloc=(BYTE *)malloc(65535*sizeof(BYTE));
- if (category_alloc==NULL) exitmessage("Not enough memory.");
+ if (category_alloc==NULL)
+   exitmessage("Not enough memory.");
  category=category_alloc+32767; //allow negative subscripts
+
  bitcode_alloc=(bitstring *)malloc(65535*sizeof(bitstring));
- if (bitcode_alloc==NULL) exitmessage("Not enough memory.");
+ if (bitcode_alloc==NULL)
+   exitmessage("Not enough memory.");
  bitcode=bitcode_alloc+32767;
- nrlower=1;nrupper=2;
- for (cat=1;cat<=15;cat++) {
-				 //Positive numbers
-				 for (nr=nrlower;nr<nrupper;nr++)
-				  { category[nr]=cat;
-				bitcode[nr].length=cat;
-				bitcode[nr].value=(WORD)nr;
-				  }
-				 //Negative numbers
-				 for (nr=-(nrupper-1);nr<=-nrlower;nr++)
-				  { category[nr]=cat;
-				bitcode[nr].length=cat;
-				bitcode[nr].value=(WORD)(nrupper-1+nr);
-				  }
-				 nrlower<<=1;
-				 nrupper<<=1;
-			   }
+
+  nrlower=1;nrupper=2;
+  for (cat=1;cat<=15;cat++)
+  {
+    //Positive numbers
+    for (nr=nrlower;nr<nrupper;nr++)
+    { 
+      category[nr]=cat;
+      bitcode[nr].length=cat;
+      bitcode[nr].value=(WORD)nr;
+    }
+
+    //Negative numbers
+    for (nr=-(nrupper-1);nr<=-nrlower;nr++)
+    {
+      category[nr]=cat;
+      bitcode[nr].length=cat;
+      bitcode[nr].value=(WORD)(nrupper-1+nr);
+    }
+
+    nrlower<<=1;
+    nrupper<<=1;
+  }
 }
 
 void precalculate_YCbCr_tables()
 {
  WORD R,G,B;
- for (R=0;R<=255;R++) {YRtab[R]=(SDWORD)(65536*0.299+0.5)*R;
-			   CbRtab[R]=(SDWORD)(65536*-0.16874+0.5)*R;
-			   CrRtab[R]=(SDWORD)(32768)*R;
-			  }
- for (G=0;G<=255;G++) {YGtab[G]=(SDWORD)(65536*0.587+0.5)*G;
-			   CbGtab[G]=(SDWORD)(65536*-0.33126+0.5)*G;
-			   CrGtab[G]=(SDWORD)(65536*-0.41869+0.5)*G;
-			  }
- for (B=0;B<=255;B++) {YBtab[B]=(SDWORD)(65536*0.114+0.5)*B;
-			   CbBtab[B]=(SDWORD)(32768)*B;
-			   CrBtab[B]=(SDWORD)(65536*-0.08131+0.5)*B;
-			  }
+
+  for (R=0;R<=255;R++)
+  {
+    YRtab[R]=(SDWORD)(65536*0.299+0.5)*R;
+    CbRtab[R]=(SDWORD)(65536*-0.16874+0.5)*R;
+    CrRtab[R]=(SDWORD)(32768)*R;
+  }
+
+  for (G=0;G<=255;G++)
+  {
+    YGtab[G]=(SDWORD)(65536*0.587+0.5)*G;
+    CbGtab[G]=(SDWORD)(65536*-0.33126+0.5)*G;
+    CrGtab[G]=(SDWORD)(65536*-0.41869+0.5)*G;
+  }
+
+  for (B=0;B<=255;B++)
+  {
+    YBtab[B]=(SDWORD)(65536*0.114+0.5)*B;
+    CbBtab[B]=(SDWORD)(32768)*B;
+    CrBtab[B]=(SDWORD)(65536*-0.08131+0.5)*B;
+  }
 }
 
 // Using a bit modified form of the FDCT routine from IJG's C source:
@@ -316,22 +337,26 @@ void precalculate_YCbCr_tables()
 //   use a multiplication rather than a division.
 void prepare_quant_tables()
 {
- double aanscalefactor[8] = {1.0, 1.387039845, 1.306562965, 1.175875602,
-			   1.0, 0.785694958, 0.541196100, 0.275899379};
- BYTE row, col;
- BYTE i = 0;
- for (row = 0; row < 8; row++)
- {
-   for (col = 0; col < 8; col++)
-     {
-       fdtbl_Y[i] = (float) (1.0 / ((double) DQTinfo.Ytable[zigzag[i]] *
-			  aanscalefactor[row] * aanscalefactor[col] * 8.0));
-       fdtbl_Cb[i] = (float) (1.0 / ((double) DQTinfo.Cbtable[zigzag[i]] *
-			  aanscalefactor[row] * aanscalefactor[col] * 8.0));
+  BYTE row, col;
+  BYTE i = 0;
 
-	   i++;
-     }
- }
+  double aanscalefactor[8] = {
+                              1.0, 1.387039845, 1.306562965, 1.175875602,
+                              1.0, 0.785694958, 0.541196100, 0.275899379
+                             };
+
+  for (row = 0; row < 8; row++)
+  {
+    for (col = 0; col < 8; col++)
+    {
+      fdtbl_Y[i] = (float) (1.0 / ((double) DQTinfo.Ytable[zigzag[i]] *
+      aanscalefactor[row] * aanscalefactor[col] * 8.0));
+      fdtbl_Cb[i] = (float) (1.0 / ((double) DQTinfo.Cbtable[zigzag[i]] *
+      aanscalefactor[row] * aanscalefactor[col] * 8.0));
+
+      i++;
+    }
+  }
 }
 
 void fdct_and_quantization(SBYTE *data,float *fdtbl,SWORD *outdata)
@@ -472,33 +497,53 @@ void process_DU(SBYTE *ComponentDU,float *fdtbl,SWORD *DC,
  SWORD Diff;
 
  fdct_and_quantization(ComponentDU,fdtbl,DU_DCT);
+
  //zigzag reorder
- for (i=0;i<=63;i++) DU[zigzag[i]]=DU_DCT[i];
+ for (i=0;i<=63;i++)
+   DU[zigzag[i]]=DU_DCT[i];
+
  Diff=DU[0]-*DC;
  *DC=DU[0];
+
  //Encode DC
- if (Diff==0) writebits(HTDC[0]); //Diff might be 0
-  else {writebits(HTDC[category[Diff]]);
-	writebits(bitcode[Diff]);
-       }
+ if(Diff==0)
+   writebits(HTDC[0]); //Diff might be 0
+ else
+ {
+   writebits(HTDC[category[Diff]]);
+   writebits(bitcode[Diff]);
+ }
+
  //Encode ACs
  for (end0pos=63;(end0pos>0)&&(DU[end0pos]==0);end0pos--) ;
+
  //end0pos = first element in reverse order !=0
- if (end0pos==0) {writebits(EOB);return;}
+ if (end0pos==0)
+ {
+   writebits(EOB);
+   return;
+ }
 
  i=1;
  while (i<=end0pos)
   {
    startpos=i;
    for (; (DU[i]==0)&&(i<=end0pos);i++) ;
+
    nrzeroes=i-startpos;
-   if (nrzeroes>=16) {
-      for (nrmarker=1;nrmarker<=nrzeroes/16;nrmarker++) writebits(M16zeroes);
+   if (nrzeroes>=16) 
+   {
+      for (nrmarker=1;nrmarker<=nrzeroes/16;nrmarker++)
+        writebits(M16zeroes);
+
       nrzeroes=nrzeroes%16;
-		     }
-   writebits(HTAC[nrzeroes*16+category[DU[i]]]);writebits(bitcode[DU[i]]);
+   }
+   writebits(HTAC[nrzeroes*16+category[DU[i]]]);
+   writebits(bitcode[DU[i]]);
+
    i++;
   }
+
  if (end0pos!=63) writebits(EOB);
 }
 

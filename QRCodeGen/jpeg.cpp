@@ -132,31 +132,28 @@ void Jpeg::writeDQT()
 
 void Jpeg::writeDHT()
 {
-  //writeword(m_dht.m_marker);
-  //writeword(m_dht.m_len);
+  writeword(m_dht.m_marker);
+  writeword(m_dht.m_len);
 
-  //writebyte(m_dht.m_YDC.m_index);
-  //for (int i = 0; i < 16; i++)
-  //  writebyte(m_dht.m_YDC.m_nrcodes[i]);
-  //for (int i = 0; i < 12; i++)
-  //  writebyte(m_dht.m_YDC.m_values[i]);
+  writeHTComponent(m_dht.m_YDC);
+  writeHTComponent(m_dht.m_YAC);
+  writeHTComponent(m_dht.m_CbDC);
+  writeHTComponent(m_dht.m_CbAC);
+}
 
-  //writebyte(m_dht.m_YAC.m_index);
-  //for (i=0;i<16;i++)  writebyte(DHTinfo.YAC_nrcodes[i]);
-  //for (i=0;i<=161;i++) writebyte(DHTinfo.YAC_values[i]);
-  //writebyte(DHTinfo.HTCbDCinfo);
-  //for (i=0;i<16;i++)  writebyte(DHTinfo.CbDC_nrcodes[i]);
-  //for (i=0;i<=11;i++)  writebyte(DHTinfo.CbDC_values[i]);
-  //writebyte(DHTinfo.HTCbACinfo);
-  //for (i=0;i<16;i++)  writebyte(DHTinfo.CbAC_nrcodes[i]);
-  //for (i=0;i<=161;i++) writebyte(DHTinfo.CbAC_values[i]);
+void Jpeg::writeHTComponent(const HTComponent &htc)
+{
+  writebyte(htc.m_index);
+  for (int i = 0; i < htc.m_nrcodeSize; i++)
+    writebyte(htc.m_nrcodes[i]);
+  for (int i = 0; i < htc.m_valuesSize; i++)
+    writebyte(htc.m_values[i]);
 }
 
 void Jpeg::writeSOS()
 {
   writeword(m_sos0.m_marker);
   writeword(m_sos0.m_len);
-
 
   writebyte(m_sos0.m_components);
   writebyte(m_sos0.m_idY);
@@ -185,5 +182,35 @@ void Jpeg::writeComment(BYTE *comment)
 
 void Jpeg::writeBits(const bitstring &bs)
 {
-  
+  //WORD value;
+  //SBYTE posval;    //bit position in the bitstring we read, should be<=15 and >=0
+  //const WORD mask[16] = {
+  //                    1,2,4,8,
+  //                    16,32,64,128,
+  //                    256,512,1024,2048,
+  //                    4096,8192,16384,32768
+  //                  };
+
+  //value=bs.value;
+  //posval=bs.length-1;
+  //while (posval>=0)
+  //{
+  //  if (value & mask[posval]) 
+  //    bytenew|=mask[bytepos];
+
+  //  posval--; bytepos--;
+  //  if (bytepos<0) 
+  //  {
+  //    if (bytenew==0xFF)
+  //    {
+  //      writebyte(0xFF);
+  //      writebyte(0);
+  //    }
+  //    else
+  //      writebyte(bytenew);
+
+  //    bytepos=7;
+  //    bytenew=0;
+  //  }
+  //}
 }

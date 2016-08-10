@@ -15,10 +15,14 @@
 /// C++-related includes
 #include <iostream>
 #include <cstdio>
+#include <string>
 
 
 namespace JPEG
 {
+  ///#define
+  #define SIZE(str) (sizeof(str)/sizeof(BYTE))
+
   /// typedef
   typedef unsigned char       BYTE ;
   typedef signed char         SBYTE;
@@ -40,7 +44,7 @@ namespace JPEG
                           35,36,48,49,57,58,62,63 
                          };
 
-  const BYTE std_dc_luminance_nrcodes[17]={0,0,1,5,1,1,1,1,1,1,0,0,0,0,0,0,0};
+  const BYTE std_dc_luminance_nrcodes[18]={0,0,1,5,1,1,1,1,1,1,0,0,0,0,0,0,0,'\0'};
   const BYTE std_dc_luminance_values[12]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 
   const BYTE std_dc_chrominance_nrcodes[17]={0,0,3,1,1,1,1,1,1,1,1,1,0,0,0,0,0};
@@ -354,34 +358,41 @@ namespace JPEG
   struct HTComponent
   {
     HTComponent()
-      :m_index    (0),
-      m_type      (-1)
+      :m_index      (0),
+      m_type        (-1),
+      m_nrcodeSize  (0),
+      m_valuesSize  (0)
     {
     }
 
-    HTComponent(const BYTE index, const BYTE type, const BYTE *nrcodes, const BYTE *values)
-      :m_index    (index),
-      m_type      (type)
+    HTComponent(const BYTE index, const BYTE type, const BYTE *nrcodes, 
+                const int nrSize, const BYTE *values, const int valSize)
+      :m_index      (index),
+      m_type        (type),
+      m_nrcodeSize  (nrSize),
+      m_valuesSize  (valSize)
     {
-      int nrcode_size = strlen((const char *)nrcodes);
-      int values_size = strlen((const char *)values);
+      if((m_nrcodeSize > 0) && (m_valuesSize > 0))
+      {
+        /// Allocate memory
+        m_nrcodes = new BYTE[m_nrcodeSize];
+        m_values = new BYTE[m_valuesSize];
 
-      /// Allocate memory
-      m_nrcodes = new BYTE[nrcode_size - 1];
-      m_values = new BYTE[values_size];
+        for (int i = 0; i < m_nrcodeSize; i++)
+          m_nrcodes[i]=nrcodes[i+1];
 
-      for (int i = 0; i < (nrcode_size - 1); i++)
-        m_nrcodes[i]=nrcodes[i+1];
-
-      for (int i = 0; i < values_size; i++)
-        m_values[i]=values[i];
+        for (int i = 0; i < m_valuesSize; i++)
+          m_values[i]=values[i];
+      }
     }
 
     /// member variables
-    BYTE m_index;
-    BYTE m_type;          // DC = 0, AC = 1
-    BYTE *m_nrcodes;
-    BYTE *m_values;
+    BYTE  m_index;
+    BYTE  m_type;          // DC = 0, AC = 1
+    BYTE  *m_nrcodes;
+    int   m_nrcodeSize;
+    BYTE  *m_values;
+    int   m_valuesSize;
   };
 
 
@@ -395,10 +406,10 @@ namespace JPEG
     DHTInfo()
       :m_marker   (0xFFC4),
       m_len       (0x01A2),
-      m_YDC       (0, 0, std_dc_luminance_nrcodes, std_dc_luminance_values),
-      m_YAC       (0x10, 1, std_ac_luminance_nrcodes, std_ac_luminance_values),
-      m_CbDC      (1, 0, std_dc_chrominance_nrcodes, std_dc_chrominance_values),
-      m_CbAC      (0x11, 1, std_dc_chrominance_nrcodes, std_dc_chrominance_values)
+      m_YDC       (0, 0, std_dc_luminance_nrcodes, 16, std_dc_luminance_values, 12),
+      m_YAC       (0x10, 1, std_ac_luminance_nrcodes, 16, std_ac_luminance_values, 162),
+      m_CbDC      (1, 0, std_dc_chrominance_nrcodes, 16, std_dc_chrominance_values, 12),
+      m_CbAC      (0x11, 1, std_dc_chrominance_nrcodes, 16, std_dc_chrominance_values, 162)
     {
     }
 
