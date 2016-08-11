@@ -1,24 +1,10 @@
-﻿Build started 10-08-2016 23:55:17.
-     1>Project "F:\Pool\C++\Barcode\QRCodeGen\QRCodeGen.vcxproj" on node 2 (Rebuild target(s)).
+﻿Build started 11-08-2016 21:47:30.
+     1>Project "F:\PTC_Me\My Projects\C++\Others\Barcode\QRCodeGen\QRCodeGen.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt bitmap.cpp jpeg.cpp main.cpp qrbitbuffer.cpp qrcode.cpp qrreedsolomongenerator.cpp qrsegment.cpp qrutility.cpp savejpg.cpp
-         savejpg.cpp
-     1>f:\pool\c++\barcode\qrcodegen\savejpg.cpp(220): warning C4309: 'argument' : truncation of constant value
-         qrutility.cpp
-         qrsegment.cpp
-         qrreedsolomongenerator.cpp
+         G:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt qrcode.cpp
          qrcode.cpp
-     1>f:\pool\c++\barcode\qrcodegen\jpeginfo.h(548): warning C4351: new behavior: elements of array 'JPEG::HT::m_dc' will be default initialized
-     1>f:\pool\c++\barcode\qrcodegen\jpeginfo.h(548): warning C4351: new behavior: elements of array 'JPEG::HT::m_ac' will be default initialized
-         qrbitbuffer.cpp
-         main.cpp
-         jpeg.cpp
-     1>f:\pool\c++\barcode\qrcodegen\jpeginfo.h(548): warning C4351: new behavior: elements of array 'JPEG::HT::m_dc' will be default initialized
-     1>f:\pool\c++\barcode\qrcodegen\jpeginfo.h(548): warning C4351: new behavior: elements of array 'JPEG::HT::m_ac' will be default initialized
-         bitmap.cpp
-         Generating Code...
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Pool\C++\Barcode\Debug\QRCodeGen.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\Pool\C++\Barcode\Debug\QRCodeGen.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Pool\C++\Barcode\Debug\QRCodeGen.lib" /MACHINE:X86 Debug\bitmap.obj
+         G:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\PTC_Me\My Projects\C++\Others\Barcode\Debug\QRCodeGen.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\PTC_Me\My Projects\C++\Others\Barcode\Debug\QRCodeGen.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\PTC_Me\My Projects\C++\Others\Barcode\Debug\QRCodeGen.lib" /MACHINE:X86 Debug\bitmap.obj
          Debug\jpeg.obj
          Debug\main.obj
          Debug\qrbitbuffer.obj
@@ -27,9 +13,9 @@
          Debug\qrsegment.obj
          Debug\qrutility.obj
          Debug\savejpg.obj
-         QRCodeGen.vcxproj -> F:\Pool\C++\Barcode\Debug\QRCodeGen.exe
-     1>Done Building Project "F:\Pool\C++\Barcode\QRCodeGen\QRCodeGen.vcxproj" (Rebuild target(s)).
+         QRCodeGen.vcxproj -> F:\PTC_Me\My Projects\C++\Others\Barcode\Debug\QRCodeGen.exe
+     1>Done Building Project "F:\PTC_Me\My Projects\C++\Others\Barcode\QRCodeGen\QRCodeGen.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:03.44
+Time Elapsed 00:00:01.75

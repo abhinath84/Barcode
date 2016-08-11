@@ -51,8 +51,8 @@ static WORD Ximage,Yimage;// image dimensions divisible by 8
 static SBYTE YDU[64]; // This is the Data Unit of Y after YCbCr->RGB transformation
 static SBYTE CbDU[64];
 static SBYTE CrDU[64];
-static SWORD DU_DCT[64]; // Current DU (after DCT and quantization) which we'll zigzag
-static SWORD DU[64]; //zigzag reordered DU which will be Huffman coded
+//static SWORD DU_DCT[64]; // Current DU (after DCT and quantization) which we'll zigzag
+//static SWORD DU[64]; //zigzag reordered DU which will be Huffman coded
 
 static FILE *fp_jpeg_stream;
 
@@ -307,23 +307,23 @@ void precalculate_YCbCr_tables()
 
   for (R=0;R<=255;R++)
   {
-    YRtab[R]=(SDWORD)(65536*0.299+0.5)*R;
-    CbRtab[R]=(SDWORD)(65536*-0.16874+0.5)*R;
-    CrRtab[R]=(SDWORD)(32768)*R;
+    YRtab[R]=(SDWORD)(65536 * 0.299+0.5)*R;
+    CbRtab[R]=(SDWORD)(65536 * -0.16874+0.5)*R;
+    CrRtab[R]=(SDWORD)(32768) * R;
   }
 
   for (G=0;G<=255;G++)
   {
-    YGtab[G]=(SDWORD)(65536*0.587+0.5)*G;
-    CbGtab[G]=(SDWORD)(65536*-0.33126+0.5)*G;
-    CrGtab[G]=(SDWORD)(65536*-0.41869+0.5)*G;
+    YGtab[G]=(SDWORD)(65536 * 0.587+0.5)*G;
+    CbGtab[G]=(SDWORD)(65536 * -0.33126+0.5)*G;
+    CrGtab[G]=(SDWORD)(65536 * -0.41869+0.5)*G;
   }
 
   for (B=0;B<=255;B++)
   {
-    YBtab[B]=(SDWORD)(65536*0.114+0.5)*B;
-    CbBtab[B]=(SDWORD)(32768)*B;
-    CrBtab[B]=(SDWORD)(65536*-0.08131+0.5)*B;
+    YBtab[B]=(SDWORD)(65536 * 0.114+0.5)*B;
+    CbBtab[B]=(SDWORD)(32768) * B;
+    CrBtab[B]=(SDWORD)(65536 * -0.08131+0.5)*B;
   }
 }
 
@@ -498,6 +498,9 @@ void process_DU(SBYTE *ComponentDU,float *fdtbl,SWORD *DC,
  BYTE nrzeroes;
  BYTE nrmarker;
  SWORD Diff;
+
+ SWORD DU_DCT[64]; // Current DU (after DCT and quantization) which we'll zigzag
+ SWORD DU[64]; //zigzag reordered DU which will be Huffman coded
 
  fdct_and_quantization(ComponentDU,fdtbl,DU_DCT);
 

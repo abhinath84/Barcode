@@ -261,6 +261,7 @@ namespace JPEG
     {
       setQuantizationTableForY();
       setQuantizationTableForCb();
+      prepareQuantizationTable();
     }
 
     DQTInfo(const WORD marker, const WORD len, const BYTE scaleFactor,  
@@ -273,20 +274,23 @@ namespace JPEG
     {
       setQuantizationTableForY();
       setQuantizationTableForCb();
+      prepareQuantizationTable();
     }
 
     /// member variables
-    WORD m_marker;            ///< Define the Quantization Table marker type, ie, SOF0 - SOF15. (2 byte)
-    WORD m_len;               ///< Define Quantization Table marker length. (2 byte)
-    BYTE m_scaleFactor;       ///< Define scale factor which controls the visual quality of the image
-                              //   the smaller is, the better image we'll get, and the smaller
-                              //   compression we'll achieve
-    BYTE m_infoY;             ///< Define information for Y component.
-                              //   = 0:  bit 0..3: number of QT = 0 (table for Y)
-                              //   bit 4..7: precision of QT, 0 = 8 bit
-    BYTE m_tableY[64];        ///< Define Quantization Table for Y component.
-    BYTE m_infoCb;            ///< Define information for Cb/Cr component.
-    BYTE m_tableCb[64];       ///< Define Quantization Table for Cb/Cr component.
+    WORD  m_marker;             ///< Define the Quantization Table marker type, ie, SOF0 - SOF15. (2 byte)
+    WORD  m_len;                ///< Define Quantization Table marker length. (2 byte)
+    BYTE  m_scaleFactor;        ///< Define scale factor which controls the visual quality of the image
+                                //   the smaller is, the better image we'll get, and the smaller
+                                //   compression we'll achieve
+    BYTE  m_infoY;              ///< Define information for Y component.
+                                //   = 0:  bit 0..3: number of QT = 0 (table for Y)
+                                //   bit 4..7: precision of QT, 0 = 8 bit
+    BYTE  m_tableY[64];         ///< Define Quantization Table for Y component.
+    float m_fdctTableY[64];     ///< Define forward DCT table for Y component.
+    BYTE  m_infoCb;             ///< Define information for Cb/Cr component.
+    BYTE  m_tableCb[64];        ///< Define Quantization Table for Cb/Cr component.
+    float m_fdctTableCb[64];     ///< Define forward DCT table for Y component.
 
     public:
       void setQuantizationTableForY()
@@ -341,6 +345,41 @@ namespace JPEG
           if (temp > 255L) temp = 255L; //limit to baseline range if requested
 
           newtable[zigzag[i]] = (BYTE) temp;
+        }
+      }
+
+      // Using a bit modified form of the FDCT routine from IJG's C source:
+      // Forward DCT routine idea taken from Independent JPEG Group's C source for
+      // JPEG encoders/decoders
+
+      // For float AA&N IDCT method, divisors are equal to quantization
+      //   coefficients scaled by scalefactor[row]*scalefactor[col], where
+      //   scalefactor[0] = 1
+      //   scalefactor[k] = cos(k*PI/16) * sqrt(2)    for k=1..7
+      //   We apply a further scale factor of 8.
+      //   What's actually stored is 1/divisor so that the inner loop can
+      //   use a multiplication rather than a division.
+      void prepareQuantizationTable()
+      {
+        int i = 0;
+
+        double aanScaleFactor[8] = {
+                                    1.0, 1.387039845, 1.306562965, 1.175875602,
+                                    1.0, 0.785694958, 0.541196100, 0.275899379
+                                   };
+
+        for (int row = 0; row < 8; row++)
+        {
+          for (int col = 0; col < 8; col++)
+          {
+            m_fdctTableY[i] = (float) (1.0 / ((double) m_tableY[zigzag[i]] *
+                                aanScaleFactor[row] * aanScaleFactor[col] * 8.0));
+
+            m_fdctTableCb[i] = (float) (1.0 / ((double) m_tableCb[zigzag[i]] *
+                              aanScaleFactor[row] * aanScaleFactor[col] * 8.0));
+
+            i++;
+          }
         }
       }
 
@@ -497,10 +536,10 @@ namespace JPEG
     This structure contains information about the color for each pixel of bitmap file.
     It store the red, green, blue, alpha color information.
   */
-  typedef struct RGBApixel
+  typedef struct RGBAInfo
   {
     /// Default Constructor
-    RGBApixel()
+    RGBAInfo()
       :red (0xff),
       green (0xff),
       blue (0xff),
@@ -509,7 +548,7 @@ namespace JPEG
     }
 
     /// Argumented Constructor
-    RGBApixel(unsigned char r, unsigned char g, unsigned char b)
+    RGBAInfo(unsigned char r, unsigned char g, unsigned char b)
       :red (r),
       green (g),
       blue (b),
@@ -518,7 +557,7 @@ namespace JPEG
     }
 
     /// Argumented Constructor
-    RGBApixel(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+    RGBAInfo(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
       :red (r),
       green (g),
       blue (b),
@@ -539,28 +578,31 @@ namespace JPEG
     WORD value;
   } bitstring;
 
+
+  //!  @struct  HT
+  /*!
+    .
+  */
   struct HT
   {
     public:
       HT()
-        :m_dc(),
-        m_ac()
       {
+      }
+
+      void computeHuffmanTable(const BYTE *dc_nrcodes, const BYTE *dc_values,
+                                const BYTE *ac_nrcodes, const BYTE *ac_values)
+      {
+        computeHuffmanTable(dc_nrcodes, dc_values, m_dc);
+        computeHuffmanTable(ac_nrcodes, ac_values, m_ac);
       }
 
       /// member variables
       bitstring m_dc[12];
       bitstring m_ac[256];
 
-      void computeHuffmanTable(BYTE *dc_nrcodes, BYTE *dc_values,
-                                BYTE *ac_nrcodes, BYTE *ac_values)
-      {
-        computeHuffmanTable(dc_nrcodes, dc_values, m_dc);
-        computeHuffmanTable(ac_nrcodes, ac_values, m_ac);
-      }
-
     private:
-      void computeHuffmanTable(BYTE *nrcodes, BYTE *values, bitstring *HT)
+      void computeHuffmanTable(const BYTE *nrcodes, const BYTE *values, bitstring *HT)
       {
         BYTE pos_in_table = 0;
         WORD codevalue = 0;
@@ -578,6 +620,61 @@ namespace JPEG
           codevalue*=2;
         }
       }
+  };
+
+
+
+  //!  @struct  YCbCr
+  /*!
+    Precalculated tables for a faster YCbCr->RGB transformation
+    We use a SDWORD table because we'll scale values by 2^16 and 
+    work with integers.
+  */
+  struct YCbCr
+  {
+    YCbCr()
+    {
+      for (int R = 0; R <= 255; R++)
+      {
+        m_YR[R]=(SDWORD)(65536 * 0.299+0.5)*R;
+        m_CbR[R]=(SDWORD)(65536 * -0.16874+0.5)*R;
+        m_CrR[R]=(SDWORD)(32768) * R;
+      }
+
+      for (int G = 0; G <= 255; G++)
+      {
+        m_YG[G]=(SDWORD)(65536 * 0.587+0.5)*G;
+        m_CbG[G]=(SDWORD)(65536 * -0.33126+0.5)*G;
+        m_CrG[G]=(SDWORD)(65536 * -0.41869+0.5)*G;
+      }
+
+      for (int B = 0; B <= 255; B++)
+      {
+        m_YB[B]=(SDWORD)(65536 * 0.114+0.5)*B;
+        m_CbB[B]=(SDWORD)(32768) * B;
+        m_CrB[B]=(SDWORD)(65536 * -0.08131+0.5)*B;
+      }
+    }
+
+    SBYTE  Y(const BYTE R, const BYTE G, const BYTE B)
+    {
+      return((SBYTE)( (m_YR[R] + m_YG[G] + m_YB[B])>>16 ) - 128);
+    }
+
+    SBYTE Cb(const BYTE R, const BYTE G, const BYTE B)
+    {
+      return((SBYTE)( (m_CbR[R] + m_CbG[G] + m_CbB[B])>>16 ) );
+    }
+
+    SBYTE Cr(const BYTE R, const BYTE G, const BYTE B)
+    {
+      return((SBYTE)( (m_CrR[R] + m_CrG[G] + m_CrB[B])>>16 ) );
+    }
+
+    /// member variables
+    SDWORD m_YR[256], m_YG[256], m_YB[256];
+    SDWORD m_CbR[256], m_CbG[256], m_CbB[256];
+    SDWORD m_CrR[256], m_CrG[256], m_CrB[256];
   };
 }
 
