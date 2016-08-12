@@ -209,7 +209,7 @@ namespace JPEG
       m_components    (3),                //Should be 3: We encode a truecolor JPG
       m_compY         (1, 0x11, 0),       // sampling factors for Y (bit 0-3 vert., 4-7 hor.)
       m_compCb        (2, 0x11, 1),
-      m_compCr        (3, 0x11, 2)
+      m_compCr        (3, 0x11, 1)
     {
     }
 
@@ -445,7 +445,7 @@ namespace JPEG
       m_YDC       (0, 0, std_dc_luminance_nrcodes, 16, std_dc_luminance_values, 12),
       m_YAC       (0x10, 1, std_ac_luminance_nrcodes, 16, std_ac_luminance_values, 162),
       m_CbDC      (1, 0, std_dc_chrominance_nrcodes, 16, std_dc_chrominance_values, 12),
-      m_CbAC      (0x11, 1, std_dc_chrominance_nrcodes, 16, std_dc_chrominance_values, 162)
+      m_CbAC      (0x11, 1, std_ac_chrominance_nrcodes, 16, std_ac_chrominance_values, 162)
     {
     }
 

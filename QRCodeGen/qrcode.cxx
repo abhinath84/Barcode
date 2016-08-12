@@ -1,7 +1,6 @@
 #include "qrcode.h"
 #include "bitmap.h"
 #include "jpeg.h"
-#include "savejpg.h"
 
 using namespace QR;
 
@@ -293,13 +292,12 @@ void QRCode::writeToJPEG(const std::string &filename)
   if(m_size > 0)
   {
     int OUT_FILE_PIXEL_PRESCALER = 8;
-    JPEG::Jpeg jpg;
 
-    //setImageHeight(m_size * OUT_FILE_PIXEL_PRESCALER);
-    //setImageWidth(m_size * OUT_FILE_PIXEL_PRESCALER);
+    // Output the jpeg file
+    JPEG::Jpeg jpg(m_size * OUT_FILE_PIXEL_PRESCALER, m_size * OUT_FILE_PIXEL_PRESCALER);
 
-    jpg.setHeight(m_size * OUT_FILE_PIXEL_PRESCALER);
-    jpg.setWidth(m_size * OUT_FILE_PIXEL_PRESCALER);
+    //jpg.setHeight(m_size * OUT_FILE_PIXEL_PRESCALER);
+    //jpg.setWidth(m_size * OUT_FILE_PIXEL_PRESCALER);
 
     for(int y = 0; y < m_size; y++)
     {
@@ -311,9 +309,6 @@ void QRCode::writeToJPEG(const std::string &filename)
           {
             for(int n = 0; n < OUT_FILE_PIXEL_PRESCALER; n++)
             {
-              //setJPEGPixel(l + (x * OUT_FILE_PIXEL_PRESCALER), 
-              //              n + (y * OUT_FILE_PIXEL_PRESCALER), 
-              //              0, 0, 0xff);
               jpg.setJPEGPixel(l + (x * OUT_FILE_PIXEL_PRESCALER), 
                             n + (y * OUT_FILE_PIXEL_PRESCALER), 
                             0, 0, 0xff);
@@ -323,7 +318,6 @@ void QRCode::writeToJPEG(const std::string &filename)
       }
     }
 
-    //WriteToFile(filename.c_str());
     jpg.writeToFile(filename.c_str());
   }
 }

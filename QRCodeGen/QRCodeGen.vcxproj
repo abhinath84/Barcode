@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{95EB51CE-2F2F-46DD-90E5-D033014B4AEF}</ProjectGuid>
+    <ProjectGuid>{49970D57-D11C-4177-877D-7A42BF9CE47F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>QRCodeGen</RootNamespace>
   </PropertyGroup>
@@ -76,6 +76,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bitmap.cxx" />
+    <ClCompile Include="jpeg.cxx" />
+    <ClCompile Include="main.cxx" />
+    <ClCompile Include="qrbitbuffer.cxx" />
+    <ClCompile Include="qrcode.cxx" />
+    <ClCompile Include="qrreedsolomongenerator.cxx" />
+    <ClCompile Include="qrsegment.cxx" />
+    <ClCompile Include="qrutility.cxx" />
+    <ClCompile Include="savejpg.cxx" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="jpeg.h" />
     <ClInclude Include="jpeginfo.h" />
@@ -85,17 +96,6 @@
     <ClInclude Include="qrsegment.h" />
     <ClInclude Include="qrutility.h" />
     <ClInclude Include="savejpg.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="bitmap.cpp" />
-    <ClCompile Include="jpeg.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="qrbitbuffer.cpp" />
-    <ClCompile Include="qrcode.cpp" />
-    <ClCompile Include="qrreedsolomongenerator.cpp" />
-    <ClCompile Include="qrsegment.cpp" />
-    <ClCompile Include="qrutility.cpp" />
-    <ClCompile Include="savejpg.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

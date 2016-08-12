@@ -15,25 +15,36 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="qrbitbuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qrutility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qrsegment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qrcode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qrreedsolomongenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="bitmap.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jpeg.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qrbitbuffer.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qrcode.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qrreedsolomongenerator.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qrsegment.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qrutility.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="savejpg.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="bitmap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="savejpg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="jpeg.h">
@@ -42,34 +53,23 @@
     <ClInclude Include="jpeginfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="qrbitbuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qrutility.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qrsegment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qrcode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qrreedsolomongenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="bitmap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="savejpg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="jpeg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="qrbitbuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qrcode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qrreedsolomongenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qrsegment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qrutility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="savejpg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
